@@ -1019,16 +1019,16 @@ namespace GMlib {
 
       // If it is a curve visualiser we need to know if it only must be made active or made in total
       int j = -1;
-      for(uint i=0; i<_visu[0].vis.size(); i++)
+      for(unsigned int i=0; i<_visu[0].vis.size(); i++)
         if(visu == _visu[0].vis[i])   j=i;
 
       if(j>=0){
-          for(uint i=0; i< _visu.size(); i++)
+          for(unsigned int i=0; i< _visu.size(); i++)
             SceneObject::insertVisualizer(_visu[i].vis[j]);
       } else{
         _visu[0].vis.push_back(visu);
         SceneObject::insertVisualizer(visu);
-        for(uint i=1; i< _visu.size(); i++) {
+        for(unsigned int i=1; i< _visu.size(); i++) {
           PCurveVisualizer<T,n>* v = dynamic_cast<PCurveVisualizer<T,n>*>(visu->makeCopy());
             _visu[i].vis.push_back(v);
             SceneObject::insertVisualizer(v);
@@ -1089,7 +1089,7 @@ namespace GMlib {
 
       p.resize(t.size());
       s.reset();
-      for( uint i = 0; i < t.size(); i++ ) {
+      for( unsigned int i = 0; i < t.size(); i++ ) {
         _eval( t[i], d, true);
         p[i] = _p;
       }

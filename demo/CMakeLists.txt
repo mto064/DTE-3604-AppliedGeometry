@@ -101,6 +101,9 @@ qt5_wrap_cpp( HDRS_MOC
   application/guiapplication.h
   application/window.h
 
+  classes/bspline.hpp
+  classes/mycurve.hpp
+
   scenario.h
   )
 target_sources( ${PROJECT_NAME} PRIVATE ${HDRS_MOC})
@@ -130,8 +133,10 @@ target_sources( ${PROJECT_NAME} PRIVATE
   application/gmlibwrapper.cpp
   application/guiapplication.cpp
   application/window.cpp
-
   application/main.cpp
+
+  classes/bspline.cpp
+  classes/mycurve.cpp
 
   scenario.cpp
   )

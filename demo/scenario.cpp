@@ -13,6 +13,10 @@
 #include <scene/sceneobjects/gmpathtrack.h>
 #include <scene/sceneobjects/gmpathtrackarrows.h>
 
+#include <parametrics/curves/gmpbsplinebasiscurve.h>
+#include <parametrics/curves/gmpcircle.h>
+#include "classes/mycurve.hpp"
+
 // qt
 #include <QQuickItem>
 
@@ -66,16 +70,21 @@ void Scenario::initializeScenario() {
   GMlib::Material mm(GMlib::GMmaterial::polishedBronze());
   mm.set(45.0);
 
-  auto ptom = new TestTorus(1.0f, 0.4f, 0.6f);
-  ptom->toggleDefaultVisualizer();
-  ptom->sample(60,60,1,1);
-  this->scene()->insert(ptom);
-  auto ptrack = new GMlib::PathTrack();
-  ptrack->setLineWidth(2);
-  ptom->insert(ptrack);
-  auto ptrack2 = new GMlib::PathTrackArrows();
-  ptrack2->setArrowLength(2);
-  ptom->insert(ptrack2);
+//  auto ptom = new TestTorus(1.0f, 0.4f, 0.6f);
+//  ptom->toggleDefaultVisualizer();
+//  ptom->sample(60,60,1,1);
+//  this->scene()->insert(ptom);
+//  auto ptrack = new GMlib::PathTrack();
+//  ptrack->setLineWidth(2);
+//  ptom->insert(ptrack);
+//  auto ptrack2 = new GMlib::PathTrackArrows();
+//  ptrack2->setArrowLength(2);
+//  ptom->insert(ptrack2);
+
+  auto test1 = new GMlib::MyCurve(2.0);
+  test1->sample(100,1);
+  test1->toggleDefaultVisualizer();
+  this->scene()->insert(test1);
 
 }
 
