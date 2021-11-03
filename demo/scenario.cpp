@@ -12,10 +12,14 @@
 #include <scene/light/gmpointlight.h>
 #include <scene/sceneobjects/gmpathtrack.h>
 #include <scene/sceneobjects/gmpathtrackarrows.h>
+#include <parametrics/curves/gmpline.h>
+#include <parametrics/surfaces/gmpsphere.h>
 
 #include <parametrics/curves/gmpbsplinebasiscurve.h>
 #include <parametrics/curves/gmpcircle.h>
-#include "classes/mycurve.hpp"
+#include "classes/mycurve.h"
+#include "classes/bspline.hpp"
+//#include "classes/mycurve.cpp"
 
 // qt
 #include <QQuickItem>
@@ -30,7 +34,7 @@ std::ostream& operator<<(std::ostream& out, const std::vector<T>& v) {
   return out;
 }
 
-
+using Vector3 = GMlib::Vector<double,3>;
 
 
 void Scenario::initializeScenario() {
@@ -70,22 +74,70 @@ void Scenario::initializeScenario() {
   GMlib::Material mm(GMlib::GMmaterial::polishedBronze());
   mm.set(45.0);
 
-//  auto ptom = new TestTorus(1.0f, 0.4f, 0.6f);
-//  ptom->toggleDefaultVisualizer();
-//  ptom->sample(60,60,1,1);
-//  this->scene()->insert(ptom);
-//  auto ptrack = new GMlib::PathTrack();
-//  ptrack->setLineWidth(2);
-//  ptom->insert(ptrack);
-//  auto ptrack2 = new GMlib::PathTrackArrows();
-//  ptrack2->setArrowLength(2);
-//  ptom->insert(ptrack2);
+  // x-coord = red
+  auto xLine = new GMlib::PLine<float>(GMlib::Point<float,3>(0,0,0),
+                                GMlib::Point<float,3>(50,0,0));
+  xLine->toggleDefaultVisualizer();
+  xLine->sample(100, 100);
+  this->scene()->insert(xLine);
 
-  auto test1 = new GMlib::MyCurve(2.0);
-  test1->sample(100,1);
-  test1->toggleDefaultVisualizer();
-  this->scene()->insert(test1);
+  // y-coord = green
+  auto yLine = new GMlib::PLine<float>(GMlib::Point<float,3>(0,0,0),
+                                GMlib::Point<float,3>(0,50,0));
+  yLine->toggleDefaultVisualizer();
+  yLine->sample(100, 100);
+  yLine->setColor(GMlib::Color(0, 255, 0));
+  this->scene()->insert(yLine);
 
+  // z-coord = blue
+  auto zLine = new GMlib::PLine<float>(GMlib::Point<float,3>(0,0,0),
+                                GMlib::Point<float,3>(0,0,50));
+  zLine->toggleDefaultVisualizer();
+  zLine->sample(100, 100);
+  zLine->setColor(GMlib::Color(0, 0, 255));
+  this->scene()->insert(zLine);
+
+  Vector3 points[] {
+    Vector3(4.0, 0.0, 0.0),
+    Vector3(4.0, 5.0, 0.0),
+    Vector3(8.0, 8.0, 0.0),
+    Vector3(16.0, 8.0, 0.0),
+    Vector3(20.0, 5.0, 0.0),
+    Vector3(20.0, 0.0, 0.0)
+  };
+
+  Vector3 points2[] {
+    Vector3(4.0, 0.0, 0.0),
+    Vector3(4.0, 5.0, 0.0),
+    Vector3(8.0, 8.0, 0.0),
+    Vector3(16.0, 8.0, 0.0),
+    Vector3(20.0, 5.0, 0.0),
+    Vector3(20.0, 0.0, 0.0)
+  };
+
+  int size = sizeof(points) / sizeof(points[0]);
+  for (int i = 0; i <= size; i++) {
+    auto sphere = new GMlib::PSphere<double>(0.2);
+    sphere->translate(points[i]);
+    sphere->sample(100, 100, 1, 1);
+    sphere->toggleDefaultVisualizer();
+    this->scene()->insert(sphere);
+  }
+
+
+  auto controlPoints = GMlib::DVector<Vector3>(size, points);
+  auto bspline = new BSpline<double>(controlPoints, 0.0, 15.0, false);
+  bspline->sample(40, 1);
+  bspline->toggleDefaultVisualizer();
+  bspline->setColor(GMlib::Color(80, 154, 235));
+  this->scene()->insert(bspline);
+
+  auto bspline2 = new BSpline<double>(controlPoints, 0.0, 15.0, false);
+  bspline2->setBlending(true);
+  bspline2->sample(40, 1);
+  bspline2->toggleDefaultVisualizer();
+  bspline2->setColor(GMlib::Color(0, 200, 30));
+  this->scene()->insert(bspline2);
 }
 
 

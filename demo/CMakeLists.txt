@@ -102,7 +102,7 @@ qt5_wrap_cpp( HDRS_MOC
   application/window.h
 
   classes/bspline.hpp
-  classes/mycurve.hpp
+  classes/mycurve.h
 
   scenario.h
   )
@@ -135,8 +135,6 @@ target_sources( ${PROJECT_NAME} PRIVATE
   application/window.cpp
   application/main.cpp
 
-  classes/bspline.cpp
-  classes/mycurve.cpp
 
   scenario.cpp
   )
