@@ -15,15 +15,19 @@ using namespace GMlib;
     _c = c;
     _startP = startP;
     _endP = endP;
-    generateKnotVector();
+    generateKnotVector(_c.getDim());
     _closed = closed;
     _blend = false;
   }
 
   template <typename T>
-  inline BSpline<T>::BSpline(const DVector< Vector<T, 3>> &p, int n) : PCurve<T,3>(20, 0, 0)
+  inline BSpline<T>::BSpline(const DVector< Vector<T, 3>> &p, int n, bool closed) : PCurve<T,3>(20, 0, 0)
   {
-
+    _k = 3;
+    _d = 2;
+    _blend = false;
+    generateControlPoints(p, n);
+    _closed = closed;
   }
 
   template <typename T>
@@ -32,23 +36,52 @@ using namespace GMlib;
   }
 
   template < typename T>
-  void BSpline<T>::generateKnotVector()
+  void BSpline<T>::generateKnotVector(int nControlPoints)
   {
-    int points = _c.getDim();
+    //int points = _c.getDim();
     //int knots = points + 3;
-    int intervals = points - _d;
+    int intervals = nControlPoints - _d;
     _t.clear();
     int i = 0;
     for (i; i < _k; i++)
         _t.push_back(T(0));
     double j = 1.0;
-    for (i; i < _k + points; i++) {
+    for (i; i < _k + nControlPoints; i++) {
         _t.push_back(T(j/intervals) * _endP);
-        if (j < points - _d)
+        if (j < nControlPoints - _d)
             j += 1.0;
     }
   }
 
+  template <typename T>
+  void BSpline<T>::generateControlPoints(const DVector<Vector<T,3>> &p, int n)
+  {
+    std::vector<T> x = {0};
+    for (int i = 1; i < p.getDim(); i++) {
+        x.push_back((p[i] - p[i-1]).getLength() + x.back());
+    }
+    _startP = x[0];
+    _endP = x[x.size() - 1];
+    generateKnotVector(n);
+
+    DMatrix<T> A(p.getDim(), n, T(0)); // initialize m*n matrix with 0's
+    for (int i = 0; i < x.size(); i++) {
+      int j = getKnotIndex(x[i], n);
+      auto b = calcB(x[i], j);
+      A[i][j - 2] = b[0];
+      A[i][j - 1] = b[1];
+      A[i][j] = b[2];
+    }
+
+    auto A_t = A;
+    A_t.transpose();
+
+    auto B_mat = A_t * A;
+    auto y = A_t * p;
+    B_mat.invert();
+    _c = B_mat * y;
+
+  }
 
   template <typename T>
   inline bool BSpline<T>::isClosed() const {
@@ -60,7 +93,7 @@ using namespace GMlib;
   {
     this->_p.setDim( d + 1 );
 
-    int i = getKnotIndex(t);
+    int i = getKnotIndex(t, _c.getDim());
 
     Vector<T,3> b = calcB(t, i);
 
@@ -69,15 +102,15 @@ using namespace GMlib;
                   b[1] * _c[i-1] +
                   b[2] * _c[i];
 
-
-
+    //std::cout << b[0] << " " << b[1] << " " << b[2] << std::endl;
+    std::cout << "p0 = " << this->_p[0] << std::endl;
   }
 
   template<typename T>
-  inline int BSpline<T>::getKnotIndex(const T t) const
+  inline int BSpline<T>::getKnotIndex(const T t, int nControlPoints) const
   {
     int index = _d;
-    for (int i = index + 1; i < _c.getDim(); i++) {
+    for (int i = index + 1; i < nControlPoints; i++) {
         if (_t[i] == t)
             return i - 1;
         else if (_t[i] > t)
@@ -141,6 +174,11 @@ using namespace GMlib;
   template <typename T>
   inline bool BSpline<T>::getBlending() const {
     return _blend;
+  }
+
+  template <typename T>
+  inline DVector<Vector<T,3>> BSpline<T>::getControlPoints() const {
+    return _c;
   }
 
 
