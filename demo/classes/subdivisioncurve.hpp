@@ -30,7 +30,8 @@ protected:
 
 
 private:
-  void doublePoints();
+  void doublePoints(std::vector<DVector<Vector<T,3>>>& p, int n) const;
+  void smoothPoints(std::vector<DVector<Vector<T,3>>>& p, int n) const;
 
   DVector<Vector<T,3>>  _points;
   bool                  _closed;

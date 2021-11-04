@@ -75,7 +75,7 @@ void Scenario::initializeScenario() {
   GMlib::Material mm(GMlib::GMmaterial::polishedBronze());
   mm.set(45.0);
 
-  bool showAxis = true;
+  bool showAxis = false;
 
   if (showAxis) {
     // x-coord = red
@@ -153,54 +153,55 @@ void Scenario::initializeScenario() {
 
   // Least Square contructor test  //
 
-  GMlib::DVector<GMlib::Vector<double,3>> circle_p(12);
-  for (int i  =0; i < 12; i++){
-      circle_p[i] = GMlib::Vector<double,3>
-        (10*cos(i * M_PI/6), 10*sin(i * M_PI/6), 0.0);
-  }
-  for (int i = 0; i < 12; i++) {
-    auto sphere = new GMlib::PSphere<double>(0.2);
-    sphere->translate(circle_p[i]);
-    sphere->sample(100, 100, 1, 1);
-    sphere->toggleDefaultVisualizer();
-    this->scene()->insert(sphere);
-  }
+//  GMlib::DVector<GMlib::Vector<double,3>> circle_p(12);
+//  for (int i  =0; i < 12; i++){
+//      circle_p[i] = GMlib::Vector<double,3>
+//        (10*cos(i * M_PI/6), 10*sin(i * M_PI/6), 0.0);
+//  }
+//  for (int i = 0; i < 12; i++) {
+//    auto sphere = new GMlib::PSphere<double>(0.2);
+//    sphere->translate(circle_p[i]);
+//    sphere->sample(100, 100, 1, 1);
+//    sphere->toggleDefaultVisualizer();
+//    this->scene()->insert(sphere);
+//  }
 
-  auto bspline3 = new BSpline<double>(circle_p, 10);
-  bspline3->sample(40, 1);
-  bspline3->toggleDefaultVisualizer();
-  bspline3->setColor(GMlib::GMcolor::blueViolet());
-  this->scene()->insert(bspline3);
+//  auto bspline3 = new BSpline<double>(circle_p, 10);
+//  bspline3->sample(40, 1);
+//  bspline3->toggleDefaultVisualizer();
+//  bspline3->setColor(GMlib::GMcolor::blueViolet());
+//  this->scene()->insert(bspline3);
 
-  auto cp = bspline3->getControlPoints();
-  for (int i = 0; i < cp.getDim(); i++) {
-    std::cout << cp[i][0] << " " << cp[i][1] << " " << cp[i][2] << std::endl;
-    auto s = new GMlib::PSphere<double>(0.2);
-    s->translate(cp[i]);
-    s->sample(100, 100, 1, 1);
-    s->toggleDefaultVisualizer();
-    s->setMaterial(GMlib::GMmaterial::emerald());
-    this->scene()->insert(s);
-  }
+//  auto cp = bspline3->getControlPoints();
+//  for (int i = 0; i < cp.getDim(); i++) {
+//    std::cout << cp[i][0] << " " << cp[i][1] << " " << cp[i][2] << std::endl;
+//    auto s = new GMlib::PSphere<double>(0.2);
+//    s->translate(cp[i]);
+//    s->sample(100, 100, 1, 1);
+//    s->toggleDefaultVisualizer();
+//    s->setMaterial(GMlib::GMmaterial::emerald());
+//    this->scene()->insert(s);
+//  }
 
 
   //  SubDivision Curve  //
 
-//  Vector3 div_p[] {
-//    Vector3(0.0, 0.0, 0.0),
-//    Vector3(0.0, 4.0, 0.0),
-//    Vector3(4.0, 4.0, 0.0),
-//    Vector3(4.0, 0.0, 0.0)
-//  };
-//  int div_size = sizeof(div_p) / sizeof(div_p[0]);
-//  auto div_points = GMlib::DVector<Vector3>(div_size, div_p);
-//  auto subdiv = new SubDivisionCurve<double>(div_points);
-//  subdiv->sample(10, 1);
-//  subdiv->toggleDefaultVisualizer();
-//  this->scene()->insert(subdiv);
+  Vector3 div_p[] {
+    Vector3(0.0, 0.0, 0.0),
+    Vector3(0.0, 4.0, 0.0),
+    Vector3(4.0, 4.0, 0.0),
+    Vector3(4.0, 0.0, 0.0)
+  };
+  int div_size = sizeof(div_p) / sizeof(div_p[0]);
+  auto div_points = GMlib::DVector<Vector3>(div_size, div_p);
+  auto subdiv = new SubDivisionCurve<double>(div_points);
+  subdiv->sample(4, 1);
+  subdiv->toggleDefaultVisualizer();
+  this->scene()->insert(subdiv);
+
+
 
 }
-
 
 
 
