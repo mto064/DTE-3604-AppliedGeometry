@@ -139,7 +139,6 @@ using namespace GMlib;
   template <typename T>
   inline Vector<T,3> BSpline<T>::calcB(T t, int i) const
   {
-
     T w_1_i = calcW(t, i, 1);
     T w_2_i = calcW(t, i, 2);
     T w_2_i1 = calcW(t, i - 1, 2);
