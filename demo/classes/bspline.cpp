@@ -41,15 +41,23 @@ using namespace GMlib;
     //int points = _c.getDim();
     //int knots = points + 3;
     int intervals = nControlPoints - _d;
+    T intervalIncr = (_endP - _startP) / T(intervals);
+
     _t.clear();
-    int i = 0;
-    for (i; i < _k; i++)
-        _t.push_back(T(0));
-    double j = 1.0;
-    for (i; i < _k + nControlPoints; i++) {
-        _t.push_back(T(j/intervals) * _endP);
-        if (j < nControlPoints - _d)
-            j += 1.0;
+//    int i = 0;
+//    for (i; i < _k; i++)        // set the 3 first knots to 0(startP)
+//        _t.push_back(_startP);
+//    double j = 1.0;             // represents current interval
+//    for (i; i < _k + nControlPoints; i++) {
+//        _t.push_back(_t[i-1] + intervalIncr);
+//    }
+    for (int i = 0; i <_k + nControlPoints; i++) {
+        if (i < _k)
+            _t.push_back(_startP);
+        else if (i < nControlPoints)
+            _t.push_back(_t[i-1] + intervalIncr);
+        else
+            _t.push_back(_endP);
     }
   }
 
@@ -103,7 +111,7 @@ using namespace GMlib;
                   b[2] * _c[i];
 
     //std::cout << b[0] << " " << b[1] << " " << b[2] << std::endl;
-    std::cout << "p0 = " << this->_p[0] << std::endl;
+    //std::cout << "p0 = " << this->_p[0] << std::endl;
   }
 
   template<typename T>
