@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MYCURVE_H
-#define MYCURVE_H
+#ifndef MYCURVE_HPP
+#define MYCURVE_HPP
 
 #include <parametrics/gmpcurve.h>
 
@@ -31,5 +31,5 @@ using namespace GMlib;
   };
 
 
-#include "mycurve.c"
-#endif // MYCURVE_H
+#include "mycurve.cpp"
+#endif // MYCURVE_HPP

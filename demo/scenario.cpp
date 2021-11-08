@@ -17,7 +17,7 @@
 
 #include <parametrics/curves/gmpbsplinebasiscurve.h>
 #include <parametrics/curves/gmpcircle.h>
-#include "classes/mycurve.h"
+#include "classes/mycurve.hpp"
 #include "classes/bspline.hpp"
 #include "classes/subdivisioncurve.hpp"
 #include "classes/blendingspline.hpp"
@@ -74,7 +74,6 @@ void Scenario::initializeScenario() {
    ***************************************************************************/
 
   bool showAxis = false;
-
   if (showAxis) {
     // x-coord = red
     auto xLine = new GMlib::PLine<float>(GMlib::Point<float,3>(0,0,0),
@@ -100,27 +99,27 @@ void Scenario::initializeScenario() {
     this->scene()->insert(zLine);
   }
 
+
   //  Model Curve //
-  auto mycurve = new MyCurve<double>(1.0);
-  mycurve->sample(100, 1);
-  mycurve->toggleDefaultVisualizer();
-  this->scene()->insert(mycurve);
+  bool showModelBlending = false;
+  if (showModelBlending)
+  {
+    auto mycurve = new MyCurve<double>(1.0);
+    mycurve->sample(500, 1);
+    mycurve->toggleDefaultVisualizer();
+    mycurve->setColor(GMlib::GMcolor::crimson());
+    this->scene()->insert(mycurve);
 
-  auto blendspline = new BlendingSpline<double>(mycurve, 10);
-  blendspline->sample(100, 1);
-  blendspline->toggleDefaultVisualizer();
-  blendspline->setColor(GMlib::GMcolor::brown());
-  blendspline->translate(Vector3(0, 0, 4));
-  this->scene()->insert(blendspline);
+    auto blendspline = new BlendingSpline<double>(mycurve, 15);
+    blendspline->sample(500, 1);
+    blendspline->toggleDefaultVisualizer();
+    blendspline->setColor(GMlib::GMcolor::blueViolet());
+    blendspline->translate(Vector3(0, 0, 4));
+    this->scene()->insert(blendspline);
+  }
 
-  Vector3 points[] {
-    Vector3(4.0, 0.0, 0.0),
-    Vector3(4.0, 5.0, 0.0),
-    Vector3(8.0, 8.0, 0.0),
-    Vector3(16.0, 8.0, 0.0),
-    Vector3(20.0, 5.0, 0.0),
-    Vector3(20.0, 0.0, 0.0)
-  };
+
+
 
 //  Vector3 points[] {
 //    Vector3(0.0, 0.0, 0.0),
@@ -135,85 +134,107 @@ void Scenario::initializeScenario() {
 //    Vector3(3.0, 0.0, 0.0)
 //  };
 
+  // ***  B-splines with different b-functions  *** //
+  bool showBSplines = false;
+  if (showBSplines)
+  {
+    Vector3 points[] {
+      Vector3(4.0, 0.0, 0.0),
+      Vector3(4.0, 5.0, 0.0),
+      Vector3(8.0, 8.0, 0.0),
+      Vector3(16.0, 8.0, 0.0),
+      Vector3(20.0, 5.0, 0.0),
+      Vector3(20.0, 0.0, 0.0)
+    };
 
-//  int size2 = sizeof(points2) / sizeof(points2[0]);
+    int size = sizeof(points) / sizeof(points[0]);
+    // visualize the control points
+    for (int i = 0; i <= size; i++) {
+      auto sphere = new GMlib::PSphere<double>(0.2);
+      sphere->translate(points[i]);
+      sphere->sample(100, 100, 1, 1);
+      sphere->toggleDefaultVisualizer();
+      this->scene()->insert(sphere);
+    }
+    // create b-spline with no blending
+    auto controlPoints = GMlib::DVector<Vector3>(size, points);
+    auto bspline = new BSpline<double>(controlPoints, 3.0, 15.0, false);
+    bspline->sample(20, 1);
+    bspline->toggleDefaultVisualizer();
+    bspline->setColor(GMlib::GMcolor::aqua());
+    this->scene()->insert(bspline);
 
-//  for (int i = 0; i <= size; i++) {
-//    auto sphere = new GMlib::PSphere<double>(0.2);
-//    sphere->translate(points[i]);
-//    sphere->sample(100, 100, 1, 1);
-//    sphere->toggleDefaultVisualizer();
-//    this->scene()->insert(sphere);
-//  }
+    // create a second bspline with blending = true
+    auto bspline2 = new BSpline<double>(controlPoints, 0.0, 15.0, false);
+    bspline2->setBlending(true);
+    bspline2->sample(40, 1);
+    bspline2->toggleDefaultVisualizer();
+    bspline2->setColor(GMlib::GMcolor::green());
+    this->scene()->insert(bspline2);
 
-//  int size = sizeof(points) / sizeof(points[0]);
-//  auto controlPoints = GMlib::DVector<Vector3>(size, points);
-//  auto bspline = new BSpline<double>(controlPoints, 3.0, 15.0, false);
-//  bspline->sample(20, 1);
-//  bspline->toggleDefaultVisualizer();
-//  bspline->setColor(GMlib::Color(80, 154, 235));
-//  this->scene()->insert(bspline);
-
-//  auto blendspline = new BlendingSpline<double>(bspline, 4);
-//  blendspline->sample(20, 1);
-//  blendspline->toggleDefaultVisualizer();
-//  blendspline->setColor(GMlib::GMcolor::brown());
-//  this->scene()->insert(blendspline);
-
-//  auto bspline2 = new BSpline<double>(controlPoints, 0.0, 15.0, false);
-//  bspline2->setBlending(true);
-//  bspline2->sample(40, 1);
-//  bspline2->toggleDefaultVisualizer();
-//  bspline2->setColor(GMlib::Color(0, 200, 30));
-//  this->scene()->insert(bspline2);
-
-  // Least Square contructor test  //
-
-//  GMlib::DVector<GMlib::Vector<double,3>> circle_p(12);
-//  for (int i  =0; i < 12; i++){
-//      circle_p[i] = GMlib::Vector<double,3>
-//        (10*cos(i * M_PI/6), 10*sin(i * M_PI/6), 0.0);
-//  }
-//  for (int i = 0; i < 12; i++) {
-//    auto sphere = new GMlib::PSphere<double>(0.2);
-//    sphere->translate(circle_p[i]);
-//    sphere->sample(100, 100, 1, 1);
-//    sphere->toggleDefaultVisualizer();
-//    this->scene()->insert(sphere);
-//  }
-
-//  auto bspline3 = new BSpline<double>(circle_p, 10);
-//  bspline3->sample(40, 1);
-//  bspline3->toggleDefaultVisualizer();
-//  bspline3->setColor(GMlib::GMcolor::blueViolet());
-//  this->scene()->insert(bspline3);
-
-//  auto cp = bspline3->getControlPoints();
-//  for (int i = 0; i < cp.getDim(); i++) {
-//    std::cout << cp[i][0] << " " << cp[i][1] << " " << cp[i][2] << std::endl;
-//    auto s = new GMlib::PSphere<double>(0.2);
-//    s->translate(cp[i]);
-//    s->sample(100, 100, 1, 1);
-//    s->toggleDefaultVisualizer();
-//    s->setMaterial(GMlib::GMmaterial::emerald());
-//    this->scene()->insert(s);
-//  }
+//    auto blendspline = new BlendingSpline<double>(bspline, 4);
+//    blendspline->sample(20, 1);
+//    blendspline->toggleDefaultVisualizer();
+//    blendspline->setColor(GMlib::GMcolor::brown());
+//    this->scene()->insert(blendspline);
+  }
 
 
-  //  SubDivision Curve  //
+  // ***  Least Square contructor test  *** //
+  bool showLeastSquare = false;
+  if (showLeastSquare)
+  {
+    // create initial points along the circle
+    GMlib::DVector<GMlib::Vector<double,3>> circle_p(12);
+    for (int i  =0; i < 12; i++){
+        circle_p[i] = GMlib::Vector<double,3>
+          (10*cos(i * M_PI/6), 10*sin(i * M_PI/6), 0.0);
+    }
+    // insert the initial points in the scene
+    for (int i = 0; i < 12; i++) {
+      auto sphere = new GMlib::PSphere<double>(0.2);
+      sphere->translate(circle_p[i]);
+      sphere->sample(100, 100, 1, 1);
+      sphere->toggleDefaultVisualizer();
+      this->scene()->insert(sphere);
+    }
+    // create a B-spline using least squares contructor
+    auto bspline3 = new BSpline<double>(circle_p, 10);
+    bspline3->sample(40, 1);
+    bspline3->toggleDefaultVisualizer();
+    bspline3->setColor(GMlib::GMcolor::blueViolet());
+    this->scene()->insert(bspline3);
+    // show the generated control points
+    auto cp = bspline3->getControlPoints();
+    for (int i = 0; i < cp.getDim(); i++) {
+      std::cout << cp[i][0] << " " << cp[i][1] << " " << cp[i][2] << std::endl;
+      auto s = new GMlib::PSphere<double>(0.2);
+      s->translate(cp[i]);
+      s->sample(100, 100, 1, 1);
+      s->toggleDefaultVisualizer();
+      s->setMaterial(GMlib::GMmaterial::emerald());
+      this->scene()->insert(s);
+    }
+  }
 
-//  Vector3 div_p[] {
-//    Vector3(0.0, 0.0, 0.0),
-//    Vector3(0.0, 4.0, 0.0),
-//    Vector3(4.0, 4.0, 0.0),
-//    Vector3(4.0, 0.0, 0.0)
-//  };
-//  int div_size = sizeof(div_p) / sizeof(div_p[0]);
-//  auto div_points = GMlib::DVector<Vector3>(div_size, div_p);
-//  auto subdiv = new SubDivisionCurve<double>(div_points);
-//  subdiv->sample(4, 1);
-//  subdiv->toggleDefaultVisualizer();
-//  this->scene()->insert(subdiv);
+
+  // ***  SubDivision Curve  *** //
+  bool showSubDiv = false;
+  if (showSubDiv) {
+    Vector3 div_p[] {
+      Vector3(0.0, 0.0, 0.0),
+      Vector3(0.0, 4.0, 0.0),
+      Vector3(4.0, 4.0, 0.0),
+      Vector3(4.0, 0.0, 0.0)
+    };
+    int div_size = sizeof(div_p) / sizeof(div_p[0]);
+    auto div_points = GMlib::DVector<Vector3>(div_size, div_p);
+    auto subdiv = new SubDivisionCurve<double>(div_points);
+    subdiv->sample(4, 1);
+    subdiv->toggleDefaultVisualizer();
+    this->scene()->insert(subdiv);
+  }
+
 
 
 

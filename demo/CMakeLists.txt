@@ -103,7 +103,7 @@ qt5_wrap_cpp( HDRS_MOC
 
   classes/bspline.hpp
   classes/subdivisioncurve.hpp
-  classes/mycurve.h
+  classes/mycurve.hpp
   classes/blendingspline.hpp
 
   scenario.h
