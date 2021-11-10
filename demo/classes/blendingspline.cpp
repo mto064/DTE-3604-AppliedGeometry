@@ -103,6 +103,18 @@ inline void BlendingSpline<T>::eval(T t, int d, bool /*l*/) const
 }
 
 template <typename T>
+inline void BlendingSpline<T>::localSimulate(double dt)
+{
+//  for (int i = 0; i < _c.size() - 1; i++) {
+//    _c[i]->rotate(dt * 0.7, Vector<double,3>(0, 0, 1));
+//  }
+
+  //_c[5]->rotate(dt * 0.8, Vector<double,3>(0, 0, 1));
+  this->resample();
+  this->setEditDone();
+}
+
+template <typename T>
 inline T BlendingSpline<T>::calcW(T t, int i, int d) const
 {
   T temp1 = t - _t[i];
@@ -129,6 +141,12 @@ inline T BlendingSpline<T>::getStartP() const {
 template <typename T>
 inline T BlendingSpline<T>::getEndP() const {
   return _t[_t.size() - _order];
+}
+
+template <typename T>
+inline std::vector<PCurve<T,3>*> BlendingSpline<T>::getControlCurves() const
+{
+  return _c;
 }
 
 

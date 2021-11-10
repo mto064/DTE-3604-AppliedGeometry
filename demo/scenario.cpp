@@ -17,15 +17,18 @@
 
 #include <parametrics/curves/gmpbsplinebasiscurve.h>
 #include <parametrics/curves/gmpcircle.h>
+#include <parametrics/curves/gmpsubcurve.h>
 #include "classes/mycurve.hpp"
 #include "classes/bspline.hpp"
 #include "classes/subdivisioncurve.hpp"
 #include "classes/blendingspline.hpp"
-//#include "classes/mycurve.cpp"
+#include "classes/cleliacurve.hpp"
+#include "classes/butterfly.hpp"
 
 // qt
 #include <QQuickItem>
 
+#include <random>
 
 template <typename T>
 inline
@@ -105,10 +108,10 @@ void Scenario::initializeScenario() {
   if (showModelBlending)
   {
     auto mycurve = new MyCurve<double>(1.0);
-    mycurve->sample(500, 1);
-    mycurve->toggleDefaultVisualizer();
-    mycurve->setColor(GMlib::GMcolor::crimson());
-    this->scene()->insert(mycurve);
+//    mycurve->sample(500, 1);
+//    mycurve->toggleDefaultVisualizer();
+//    mycurve->setColor(GMlib::GMcolor::crimson());
+//    this->scene()->insert(mycurve);
 
     auto blendspline = new BlendingSpline<double>(mycurve, 15);
     blendspline->sample(500, 1);
@@ -116,9 +119,69 @@ void Scenario::initializeScenario() {
     blendspline->setColor(GMlib::GMcolor::blueViolet());
     blendspline->translate(Vector3(0, 0, 4));
     this->scene()->insert(blendspline);
+    // show control curves
+    auto cc = blendspline->getControlCurves();
+    for (auto& curve : cc) {
+      curve->sample(50, 1);
+      curve->toggleDefaultVisualizer();
+      this->scene()->insert(curve);
+    }
   }
 
+  bool showClelia = false;
+  if (showClelia)
+  {
+    auto clelia = new CleliaCurve<double>(3.0, 10);
+//    clelia->sample(300, 1);
+//    clelia->toggleDefaultVisualizer();
+//    clelia->setColor(GMlib::GMcolor::aliceBlue());
+//    this->scene()->insert(clelia);
 
+    auto blendspline = new BlendingSpline<double>(clelia, 19);
+    blendspline->sample(500, 1);
+    blendspline->toggleDefaultVisualizer();
+    blendspline->setColor(GMlib::GMcolor::blueViolet());
+    //blendspline->translate(Vector3(0, 0, 4));
+    this->scene()->insert(blendspline);
+    // show control curves
+    auto cc = blendspline->getControlCurves();
+    std::cout << cc.size() << std::endl;
+//    for (auto& curve : cc) {
+//      curve->sample(50, 1);
+//      curve->toggleDefaultVisualizer();
+//      this->scene()->insert(curve);
+//    }
+
+  }
+
+  bool showButterfly = true;
+  if (showButterfly)
+  {
+    auto butterfly = new Butterfly<double>();
+//    butterfly->sample(500, 1);
+//    butterfly->toggleDefaultVisualizer();
+//    butterfly->setColor(GMlib::GMcolor::aliceBlue());
+//    this->scene()->insert(butterfly);
+
+    auto blendspline = new BlendingSpline<double>(butterfly, 100);
+    blendspline->sample(500, 1);
+    blendspline->toggleDefaultVisualizer();
+    blendspline->setColor(GMlib::GMcolor::darkGreen());
+    blendspline->translate(Vector3(0, 0, 4));
+    this->scene()->insert(blendspline);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(0, 1.0);
+
+    auto cc = blendspline->getControlCurves();
+    for (auto& curve : cc) {
+      curve->sample(100, 1);
+      curve->toggleDefaultVisualizer();
+      curve->setColor(Color(dis(gen), dis(gen), dis(gen)));
+      this->scene()->insert(curve);
+    }
+  }
 
 
 //  Vector3 points[] {
@@ -133,6 +196,7 @@ void Scenario::initializeScenario() {
 //    Vector3(2.0, 1.0, 0.0),
 //    Vector3(3.0, 0.0, 0.0)
 //  };
+
 
   // ***  B-splines with different b-functions  *** //
   bool showBSplines = false;

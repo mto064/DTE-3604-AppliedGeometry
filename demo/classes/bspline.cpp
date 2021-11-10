@@ -38,19 +38,12 @@ using namespace GMlib;
   template < typename T>
   void BSpline<T>::generateKnotVector(int nControlPoints)
   {
-    //int points = _c.getDim();
-    //int knots = points + 3;
+
     int intervals = nControlPoints - _d;
     T intervalIncr = (_endP - _startP) / T(intervals);
 
     _t.clear();
-//    int i = 0;
-//    for (i; i < _k; i++)        // set the 3 first knots to 0(startP)
-//        _t.push_back(_startP);
-//    double j = 1.0;             // represents current interval
-//    for (i; i < _k + nControlPoints; i++) {
-//        _t.push_back(_t[i-1] + intervalIncr);
-//    }
+
     for (int i = 0; i <_k + nControlPoints; i++) {
         if (i < _k)
             _t.push_back(_startP);

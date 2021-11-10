@@ -1,17 +1,17 @@
 #pragma once
-#ifndef MYCURVE_HPP
-#define MYCURVE_HPP
+#ifndef Butterfly_HPP
+#define Butterfly_HPP
 
 #include <parametrics/gmpcurve.h>
 
 using namespace GMlib;
 
 template <typename T>
-class MyCurve : public PCurve<T,3> {
-  GM_SCENEOBJECT(MyCurve)
+class Butterfly : public PCurve<T,3> {
+  GM_SCENEOBJECT(Butterfly)
 public:
-  MyCurve(T radius);
-  virtual ~MyCurve(){}
+  Butterfly();
+  virtual ~Butterfly(){}
 
   // from PCurve
   bool            isClosed() const override;
@@ -25,11 +25,11 @@ protected:
   //void            computeSurroundingSphere( const std::vector<DVector<Vector<T,3>>>& /*p*/, Sphere<double,3>& s ) const override;
 
 
-  T               _rx;
-  T               _ry;
+  T         _r;
+  T         _c;
 
 };
 
 
-#include "mycurve.cpp"
-#endif // MYCURVE_HPP
+#include "Butterfly.cpp"
+#endif // Butterfly_HPP

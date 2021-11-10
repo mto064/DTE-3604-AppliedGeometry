@@ -105,6 +105,8 @@ qt5_wrap_cpp( HDRS_MOC
   classes/subdivisioncurve.hpp
   classes/mycurve.hpp
   classes/blendingspline.hpp
+  classes/cleliacurve.hpp
+  classes/butterfly.hpp
 
   scenario.h
   )

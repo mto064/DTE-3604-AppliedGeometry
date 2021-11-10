@@ -22,12 +22,14 @@ public:
   void    setBlending(bool blend);
   bool    getBlending() const;
 
+  std::vector<PCurve<T,3>*> getControlCurves() const;
 
 protected:
   // Virtual functions from PCurve, which have to be implemented locally
   void            eval(T t, int d, bool l) const override;
   T               getStartP() const override;
   T               getEndP()   const override;
+  void            localSimulate(double dt) override;
 
 private:
   void  generateKnotVector(T parDelta, int n);
