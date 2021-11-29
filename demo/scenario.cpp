@@ -24,6 +24,9 @@
 #include "classes/blendingspline.hpp"
 #include "classes/cleliacurve.hpp"
 #include "classes/butterfly.hpp"
+#include "classes/blendingsplinesurface.hpp"
+
+#include "classes/psimplesubsurf.h"
 
 // qt
 #include <QQuickItem>
@@ -154,7 +157,7 @@ void Scenario::initializeScenario() {
 
   }
 
-  bool showButterfly = true;
+  bool showButterfly = false;
   if (showButterfly)
   {
     auto butterfly = new Butterfly<double>();
@@ -283,18 +286,18 @@ void Scenario::initializeScenario() {
 
 
   // ***  SubDivision Curve  *** //
-  bool showSubDiv = false;
+  bool showSubDiv = true;
   if (showSubDiv) {
     Vector3 div_p[] {
       Vector3(0.0, 0.0, 0.0),
-      Vector3(0.0, 4.0, 0.0),
-      Vector3(4.0, 4.0, 0.0),
-      Vector3(4.0, 0.0, 0.0)
+      Vector3(0.0, 8.0, 0.0),
+      Vector3(8.0, 8.0, 0.0),
+      Vector3(8.0, 0.0, 0.0)
     };
     int div_size = sizeof(div_p) / sizeof(div_p[0]);
     auto div_points = GMlib::DVector<Vector3>(div_size, div_p);
     auto subdiv = new SubDivisionCurve<double>(div_points);
-    subdiv->sample(4, 1);
+    subdiv->sample(2, 1);
     subdiv->toggleDefaultVisualizer();
     this->scene()->insert(subdiv);
   }
