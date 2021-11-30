@@ -10,6 +10,8 @@
 
 // gmlib
 #include <scene/light/gmpointlight.h>
+#include <scene/sceneobjects/gmspotlightg.h>
+#include <scene/sceneobjects/gmpointlightg.h>
 #include <scene/sceneobjects/gmpathtrack.h>
 #include <scene/sceneobjects/gmpathtrackarrows.h>
 #include <parametrics/curves/gmpline.h>
@@ -18,6 +20,7 @@
 #include <parametrics/curves/gmpbsplinebasiscurve.h>
 #include <parametrics/curves/gmpcircle.h>
 #include <parametrics/curves/gmpsubcurve.h>
+#include <parametrics/surfaces/gmpplane.h>
 #include "classes/mycurve.hpp"
 #include "classes/bspline.hpp"
 #include "classes/subdivisioncurve.hpp"
@@ -26,7 +29,7 @@
 #include "classes/butterfly.hpp"
 #include "classes/blendingsplinesurface.hpp"
 
-#include "classes/psimplesubsurf.h"
+#include "classes/psimplesubsurf.hpp"
 
 // qt
 #include <QQuickItem>
@@ -49,13 +52,16 @@ void Scenario::initializeScenario() {
 
   // Insert a light
   GMlib::Point<GLfloat,3> init_light_pos( 2.0, 4.0, 10 );
-  GMlib::PointLight *light = new GMlib::PointLight(  GMlib::GMcolor::white(), GMlib::GMcolor::white(),
+  GMlib::PointLightG *light = new GMlib::PointLightG(  GMlib::GMcolor::white(), GMlib::GMcolor::white(),
                                                      GMlib::GMcolor::white(), init_light_pos );
   light->setAttenuation(0.8f, 0.002f, 0.0008f);
   this->scene()->insertLight( light, false );
 
   // Insert Sun
   this->scene()->insertSun();
+
+  // insert pointlight
+  this->scene()->insert(light);
 
   // Default camera parameters
   int init_viewport_size = 600;
@@ -286,7 +292,7 @@ void Scenario::initializeScenario() {
 
 
   // ***  SubDivision Curve  *** //
-  bool showSubDiv = true;
+  bool showSubDiv = false;
   if (showSubDiv) {
     Vector3 div_p[] {
       Vector3(0.0, 0.0, 0.0),
@@ -303,7 +309,19 @@ void Scenario::initializeScenario() {
   }
 
 
+  bool showBlendSurface = true;
+  if (showBlendSurface) {
+    auto plane = new GMlib::PPlane<double>(GMlib::Point<double,3>(0, 0, 0), Vector3(4, 0, 0), Vector3(0, 4, 0));
+    plane->sample(10, 10, 1, 1);
+    plane->toggleDefaultVisualizer();
+    this->scene()->insert(plane);
 
+    auto blendSurf = new BlendingSplineSurface<double>(plane, 3, 3);
+    blendSurf->sample(10, 10, 1, 1);
+    blendSurf->toggleDefaultVisualizer();
+    this->scene()->insert(blendSurf);
+
+  }
 
 }
 

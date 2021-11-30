@@ -12,7 +12,7 @@ template <typename T>
 class BlendingSpline : public PCurve<T,3> {
   GM_SCENEOBJECT(BlendingSpline)
 public:
-  BlendingSpline(PCurve<T,3>* curve, int n);
+  BlendingSpline(PCurve<T,3>* curve, int n); // n is number of subcurves
 
   virtual ~BlendingSpline(){}
 

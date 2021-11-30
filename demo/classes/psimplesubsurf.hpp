@@ -21,8 +21,8 @@
 **********************************************************************************/
 
 
-#ifndef GM_PARAMETRICS_SURFACES_PSIMPLESUBSURF_H
-#define GM_PARAMETRICS_SURFACES_PSIMPLESUBSURF_H
+#ifndef GM_PARAMETRICS_SURFACES_PSIMPLESUBSURF_HPP
+#define GM_PARAMETRICS_SURFACES_PSIMPLESUBSURF_HPP
 
 #include <parametrics/gmpsurf.h>
 //#include <gmCoreModule>
@@ -68,7 +68,7 @@
   }; // END class PSimpleSubSurf
 
 
-
+#include "psimplesubsurf.cpp"
 
 
 

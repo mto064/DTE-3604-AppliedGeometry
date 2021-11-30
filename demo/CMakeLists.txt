@@ -107,7 +107,7 @@ qt5_wrap_cpp( HDRS_MOC
   classes/blendingspline.hpp
   classes/cleliacurve.hpp
   classes/butterfly.hpp
-  classes/psimplesubsurf.h
+  classes/psimplesubsurf.hpp
   classes/blendingsplinesurface.hpp
 
   scenario.h
