@@ -506,6 +506,7 @@ public:
   Matrix<T,4,4>&         operator=(const Matrix<T,4,4>& v);
 
   // Multiplication vector
+  //HqMatrix<T,3>          operator*(const double d) const {return Matrix<T,4,4>::operator*(d);}
   Point<T,3>             operator*(const Point<T,3>& v)      const;
   Vector<T,3>            operator*(const Vector<T,3>& v)      const;
   ScalarPoint<T,3>       operator*(const ScalarPoint<T,3>& v)const;
@@ -513,6 +514,10 @@ public:
   Arrow<T,3>             operator*(const Arrow<T,3>& v)      const;
   Box<T,3>               operator*(const Box<T,3>& v)          const;
   Matrix<T,4,4>          operator*(const HqMatrix<T,3>& v)  const;
+
+ //***** Scaling. *****
+//    const Matrix<T,n,m>&      operator*=(const double d);
+  HqMatrix<T,3>             operator*(const double d) const;
 
   // Casting
   template <typename G>
