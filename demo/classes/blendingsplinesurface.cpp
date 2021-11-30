@@ -7,7 +7,7 @@
 using namespace GMlib;
 
 template <typename T>
-inline BlendingSplineSurface<T>::BlendingSplineSurface(PSurf<T,3>* surf, int nu, int nv)
+inline BlendingSplineSurface<T>::BlendingSplineSurface(PSurf<T,3>* surf, int nu, int nv) : _surf(surf)
 {
   _closedU = surf->isClosedU();
   _closedV = surf->isClosedV();
@@ -15,6 +15,7 @@ inline BlendingSplineSurface<T>::BlendingSplineSurface(PSurf<T,3>* surf, int nu,
   _endPU = surf->getParEndU();
   _startPV = surf->getParStartV();
   _endPV = surf->getParEndV();
+
 
   _knotU.clear();
   _knotV.clear();
@@ -82,8 +83,8 @@ void BlendingSplineSurface<T>::generateSubSurfaces(PSurf<T,3>* surf, int nu, int
 template <typename T>
 inline int BlendingSplineSurface<T>::getKnotIndex(const std::vector<T>& knotVector, const T t) const
 {
-  int index = 2;
-  int nControlPoints = knotVector.size() - 2;
+  int index = 1;
+  int nControlPoints = knotVector.size() - 1;
 
   for (int i = index + 1; i < nControlPoints; i++) {
     if (knotVector[i] == t)
@@ -100,14 +101,37 @@ inline int BlendingSplineSurface<T>::getKnotIndex(const std::vector<T>& knotVect
 template <typename T>
 void BlendingSplineSurface<T>::eval(T u, T v, int d1, int d2, bool lu, bool lv) const
 {
-
+  this->_p.setDim( d1+1, d2+1 );
   int iu = getKnotIndex(_knotU, u);
   int iv = getKnotIndex(_knotV, v);
 
-  auto A = _subSurfaces[iu][iv]->getMatrix();
+  HqMatrix<float,3> A_00 = _subSurfaces[iu-1][iv-1]->getMatrix();
+  HqMatrix<float,3> A_10 = _subSurfaces[iu][iv-1]->getMatrix();
+  HqMatrix<float,3> A_01 = _subSurfaces[iu-1][iv]->getMatrix();
+  HqMatrix<float,3> A_11 = _subSurfaces[iu][iv]->getMatrix();
 
-  T b_i_u = calcBlending(calcW(_knotU, u, iu, d1));
+  HqMatrix<float,3> A_1 = A_10 - A_00;
+  HqMatrix<float,3> A_2 = A_01 - A_00;
+  HqMatrix<float,3> A_3 = A_11 - A_01 - A_1;
 
+
+
+  Vector<double,2> b_u = calcBlending(calcW(_knotU, u, iu, 1));
+  Vector<double,2> b_v = calcBlending(calcW(_knotV, v, iv, 1));
+
+//  HqMatrix<float,3> test = A_1 * b_u[0];
+  HqMatrix<float,3> A = A_00 + A_1 * b_u[0] + A_2 * b_v[0] + A_3 * (b_u[0] * b_v[0]);
+  HqMatrix<float,3> Au = A_1 * b_u[1] + A_3 * (b_u[1] * b_v[0]);
+  HqMatrix<float,3>Av = A_2 * b_v[1] + A_3 * (b_u[0] * b_v[1]);
+
+  DMatrix<Vector<T,3> > S = _surf->evaluate(u, v, d1, d2);
+
+  Point<float,3> p = S[0][0];
+  Vector<float,3> Su = S[1][0];
+  Vector<float,3> Sv = S[0][1];
+  this->_p[0][0] = A * p;
+  this->_p[1][0] = Au * p + A * Su;
+  this->_p[0][1] = Av * p + A * Sv;
 
 }
 
@@ -120,9 +144,9 @@ inline T BlendingSplineSurface<T>::calcW(const std::vector<T>& knot,T t, int i, 
 }
 
 template <typename T>
-inline T BlendingSplineSurface<T>::calcBlending(T w) const
+inline Vector<double,2> BlendingSplineSurface<T>::calcBlending(double w) const
 {
-  return (3 * w * w) - (2 * w * w * w);
+  return Vector<double,2>((3 * w * w) - (2 * w * w * w), (6 * w) - (6 * w * w));
 }
 
 
@@ -138,7 +162,7 @@ bool BlendingSplineSurface<T>::isClosedV() const {
 
 template <typename T>
 T BlendingSplineSurface<T>::getStartPU() const {
-  return _knotU[2];
+  return _knotU[1];
 }
 
 template <typename T>
@@ -148,7 +172,7 @@ T BlendingSplineSurface<T>::getEndPU() const {
 
 template <typename T>
 T BlendingSplineSurface<T>::getStartPV() const {
-  return _knotV[2];
+  return _knotV[1];
 }
 
 template <typename T>

@@ -35,11 +35,12 @@ private:
   int   getKnotIndex(const std::vector<T>& knotVector, const T t) const;
 
   T     calcW(const std::vector<T>& knot, T t, int i, int d) const;
-  T     calcBlending(T w) const;
+  Vector<double,2>     calcBlending(double w) const;
 
   bool _closedU;
   bool _closedV;
 
+  PSurf<T,3>*     _surf;
   std::vector<std::vector<PSimpleSubSurf<T>*>> _subSurfaces;
   std::vector<T>  _knotU;
   std::vector<T>  _knotV;

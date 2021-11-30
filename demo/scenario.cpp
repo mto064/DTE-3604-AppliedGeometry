@@ -311,12 +311,12 @@ void Scenario::initializeScenario() {
 
   bool showBlendSurface = true;
   if (showBlendSurface) {
-    auto plane = new GMlib::PPlane<double>(GMlib::Point<double,3>(0, 0, 0), Vector3(4, 0, 0), Vector3(0, 4, 0));
-    plane->sample(10, 10, 1, 1);
-    plane->toggleDefaultVisualizer();
-    this->scene()->insert(plane);
+    auto plane = new GMlib::PPlane<double>(GMlib::Point<double,3>(0, 0, 0), Vector3(3, 0, 0), Vector3(0, 4, 0));
+//    plane->sample(10, 10, 1, 1);
+//    plane->toggleDefaultVisualizer();
+//    this->scene()->insert(plane);
 
-    auto blendSurf = new BlendingSplineSurface<double>(plane, 3, 3);
+    auto blendSurf = new BlendingSplineSurface<double>(plane, 3, 4);
     blendSurf->sample(10, 10, 1, 1);
     blendSurf->toggleDefaultVisualizer();
     this->scene()->insert(blendSurf);
