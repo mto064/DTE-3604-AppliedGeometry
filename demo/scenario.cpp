@@ -21,6 +21,7 @@
 #include <parametrics/curves/gmpcircle.h>
 #include <parametrics/curves/gmpsubcurve.h>
 #include <parametrics/surfaces/gmpplane.h>
+#include <parametrics/surfaces/gmpcylinder.h>
 #include "classes/mycurve.hpp"
 #include "classes/bspline.hpp"
 #include "classes/subdivisioncurve.hpp"
@@ -84,6 +85,10 @@ void Scenario::initializeScenario() {
    * Standar example, including path track and path track arrows             *
    *                                                                         *
    ***************************************************************************/
+
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_real_distribution<> dis(0, 1.0);
 
   bool showAxis = false;
   if (showAxis) {
@@ -179,9 +184,7 @@ void Scenario::initializeScenario() {
     blendspline->translate(Vector3(0, 0, 4));
     this->scene()->insert(blendspline);
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(0, 1.0);
+
 
     auto cc = blendspline->getControlCurves();
     for (auto& curve : cc) {
@@ -309,14 +312,15 @@ void Scenario::initializeScenario() {
   }
 
 
-  bool showBlendSurface = true;
+  bool showBlendSurface = false;
   if (showBlendSurface) {
-    auto plane = new GMlib::PPlane<double>(GMlib::Point<double,3>(0, 0, 0), Vector3(3, 0, 0), Vector3(0, 4, 0));
-//    plane->sample(10, 10, 1, 1);
-//    plane->toggleDefaultVisualizer();
-//    this->scene()->insert(plane);
+    auto plane = new GMlib::PPlane<float>(GMlib::Point<float,3>(0, 0, 0), Vector3(8, 0, 0), Vector3(0, 15, 0));
+    plane->sample(10, 10, 1, 1);
+    plane->toggleDefaultVisualizer();
+    plane->setMaterial(GMlib::GMmaterial::emerald());
+    this->scene()->insert(plane);
 
-    auto blendSurf = new BlendingSplineSurface<double>(plane, 3, 4);
+    auto blendSurf = new BlendingSplineSurface<float>(plane, 3, 4);
     blendSurf->sample(10, 10, 1, 1);
     blendSurf->toggleDefaultVisualizer();
     auto subSurfs = blendSurf->getSubSurfaces();
@@ -327,7 +331,36 @@ void Scenario::initializeScenario() {
     //subSurfs[0][0]->rotate(20, Vector3(0, 1, 0));
     blendSurf->sample(10, 10, 1, 1);
     this->scene()->insert(blendSurf);
+    auto subs = blendSurf->getSubSurfaces();
 
+
+
+    for (int i = 0; i < 5; i++) {
+      double u = plane->getParStartU() + i * plane->getParDeltaU() / 4;
+
+       for (int j = 0; j < 5; j++) {
+          double v = plane->getParStartV() + j * plane->getParDeltaV() / 4;
+//          std::cout << plane->getPosition(u, v) << std::endl;
+//          std::cout << blendSurf->getPosition(u, v) << std::endl;
+
+       }
+    }
+
+  }
+
+  bool showBlendSurf2 = true;
+  if (showBlendSurf2) {
+    auto cylinder = new GMlib::PCylinder<float>(2, 2, 5);
+    cylinder->sample(100, 100, 1, 1);
+    cylinder->toggleDefaultVisualizer();
+    //cylinder->translate(Vector3(0, 0, 5));
+    this->scene()->insert(cylinder);
+
+    auto blendSurf = new BlendingSplineSurface<float>(cylinder, 4, 10);
+    blendSurf->sample(100, 100, 1, 1);
+    blendSurf->toggleDefaultVisualizer();
+    blendSurf->setMaterial(GMlib::GMmaterial::emerald());
+    this->scene()->insert(blendSurf);
   }
 
 }
