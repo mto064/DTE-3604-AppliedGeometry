@@ -319,6 +319,13 @@ void Scenario::initializeScenario() {
     auto blendSurf = new BlendingSplineSurface<double>(plane, 3, 4);
     blendSurf->sample(10, 10, 1, 1);
     blendSurf->toggleDefaultVisualizer();
+    auto subSurfs = blendSurf->getSubSurfaces();
+    //subSurfs[1][1]->translate(Vector3(0, 0, 2));
+//    for (int i = 0; i < subSurfs[0].size(); i++) {
+//      subSurfs[0][i]->rotate(-45, Vector3(0, 1, 0));
+//    }
+    //subSurfs[0][0]->rotate(20, Vector3(0, 1, 0));
+    blendSurf->sample(10, 10, 1, 1);
     this->scene()->insert(blendSurf);
 
   }

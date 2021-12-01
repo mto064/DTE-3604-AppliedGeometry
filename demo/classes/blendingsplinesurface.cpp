@@ -115,7 +115,6 @@ void BlendingSplineSurface<T>::eval(T u, T v, int d1, int d2, bool lu, bool lv) 
   HqMatrix<float,3> A_3 = A_11 - A_01 - A_1;
 
 
-
   Vector<double,2> b_u = calcBlending(calcW(_knotU, u, iu, 1));
   Vector<double,2> b_v = calcBlending(calcW(_knotV, v, iv, 1));
 
@@ -134,6 +133,27 @@ void BlendingSplineSurface<T>::eval(T u, T v, int d1, int d2, bool lu, bool lv) 
   this->_p[0][1] = Av * p + A * Sv;
 
 }
+
+template <typename T>
+void BlendingSplineSurface<T>::localSimulate(double dt)
+{
+  if (runSimulate) {
+      static double t1 = 0;
+      static double t2 = 0;
+
+      t1 += dt;
+      t2 -= dt;
+//    for (int i = 0; i < _subSurfaces[0].size(); i++) {
+//      _subSurfaces[1][i]->rotate(cos(t * 0.2), Vector<double,3>(0, 1, 0));
+//    }
+    _subSurfaces[1][1]->translate(Vector<double,3>(0, 0, dt));
+    this->sample(10, 10, 1,1);
+    this->setEditDone();
+  }
+
+}
+
+
 
 template <typename T>
 inline T BlendingSplineSurface<T>::calcW(const std::vector<T>& knot,T t, int i, int d) const
@@ -178,6 +198,12 @@ T BlendingSplineSurface<T>::getStartPV() const {
 template <typename T>
 T BlendingSplineSurface<T>::getEndPV() const {
   return _knotV[_knotV.size() - 2];
+}
+
+template <typename T>
+std::vector<std::vector<PSimpleSubSurf<T>*>> BlendingSplineSurface<T>::getSubSurfaces() const
+{
+  return _subSurfaces;
 }
 
 #endif
