@@ -110,6 +110,8 @@ qt5_wrap_cpp( HDRS_MOC
   classes/psimplesubsurf.hpp
   classes/blendingsplinesurface.hpp
 
+  classes/subpatch.h
+
   scenario.h
   )
 target_sources( ${PROJECT_NAME} PRIVATE ${HDRS_MOC})

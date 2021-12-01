@@ -3,7 +3,7 @@
 #define BLENDINGSPLINESURFACE_HPP
 
 #include <parametrics/gmpsurf.h>
-#include "psimplesubsurf.hpp"
+#include "subpatch.h"
 #include <vector>
 
 using namespace GMlib;
@@ -15,7 +15,7 @@ GM_SCENEOBJECT(BlendingSplineSurface)
 public:
   BlendingSplineSurface(PSurf<T,3>* surf, int nu, int nv);
 
-  std::vector<std::vector<PSimpleSubSurf<T>*>> getSubSurfaces() const;
+  std::vector<std::vector<SubPatch<T>*>> getSubSurfaces() const;
 
 // from PSurf
   bool          isClosedU() const override;
@@ -44,7 +44,7 @@ private:
   bool _closedV;
 
   PSurf<T,3>*     _surf;
-  std::vector<std::vector<PSimpleSubSurf<T>*>> _subSurfaces;
+  std::vector<std::vector<SubPatch<T>*>> _subSurfaces;
   std::vector<T>  _knotU;
   std::vector<T>  _knotV;
 
@@ -53,7 +53,7 @@ private:
   T               _startPV;
   T               _endPV;
 
-  bool runSimulate = false;
+  bool runSimulate = true;
 
 };
 
