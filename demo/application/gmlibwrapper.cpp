@@ -68,6 +68,7 @@ void GMlibWrapper::render( const QString& name, const QRect& viewport_in, GMlib:
     camera->reshape( 0, 0, size.width(), size.height() );
   }
 
+  prepare();
   // Render and swap buffers
   renderer->render(target);
 }
@@ -78,7 +79,7 @@ void GMlibWrapper::timerEvent(QTimerEvent* e) {
   e->accept();
 
   _scene->simulate();
-  prepare();
+
 }
 
 
