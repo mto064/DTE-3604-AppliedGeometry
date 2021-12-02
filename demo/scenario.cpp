@@ -323,15 +323,15 @@ void Scenario::initializeScenario() {
     auto blendSurf = new BlendingSplineSurface<float>(plane, 3, 4);
     blendSurf->sample(10, 10, 1, 1);
     blendSurf->toggleDefaultVisualizer();
-    auto subSurfs = blendSurf->getSubSurfaces();
+    //auto subSurfs = blendSurf->getSubSurfaces();
     //subSurfs[1][1]->translate(Vector3(0, 0, 2));
 //    for (int i = 0; i < subSurfs[0].size(); i++) {
 //      subSurfs[0][i]->rotate(-45, Vector3(0, 1, 0));
 //    }
     //subSurfs[0][0]->rotate(20, Vector3(0, 1, 0));
-    blendSurf->sample(10, 10, 1, 1);
-    this->scene()->insert(blendSurf);
-    auto subs = blendSurf->getSubSurfaces();
+//    blendSurf->sample(10, 10, 1, 1);
+//    this->scene()->insert(blendSurf);
+//    auto subs = blendSurf->getSubSurfaces();
 
 
 
@@ -348,7 +348,7 @@ void Scenario::initializeScenario() {
 
   }
 
-  bool showBlendSurf2 = true;
+  bool showBlendSurf2 = false;
   if (showBlendSurf2) {
     auto cylinder = new GMlib::PCylinder<float>(2, 2, 5);
     cylinder->sample(100, 100, 1, 1);
@@ -360,6 +360,20 @@ void Scenario::initializeScenario() {
     blendSurf->sample(100, 100, 1, 1);
     blendSurf->toggleDefaultVisualizer();
     blendSurf->setMaterial(GMlib::GMmaterial::emerald());
+    this->scene()->insert(blendSurf);
+  }
+
+  bool showBlendTorus = true;
+  if (showBlendTorus) {
+    auto torus = new GMlib::PTorus<float>(3, 1, 1);
+    torus->sample(100, 100, 1,1 );
+    torus->toggleDefaultVisualizer();
+    scene()->insert(torus);
+
+    auto blendSurf = new BlendingSplineSurface<float>(torus, 5, 8);
+    blendSurf->sample(100, 100, 1, 1);
+    blendSurf->toggleDefaultVisualizer();
+    blendSurf->setMaterial(GMlib::GMmaterial::ruby());
     this->scene()->insert(blendSurf);
   }
 

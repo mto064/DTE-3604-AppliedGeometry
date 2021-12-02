@@ -17,8 +17,6 @@ inline BlendingSplineSurface<T>::BlendingSplineSurface(PSurf<T,3>* surf, int nu,
   _endPV = surf->getParEndV();
 
 
-
-
   _knotU.clear();
   _knotV.clear();
   generateKnotVectorU(_endPU - _startPU, nu);
@@ -37,21 +35,31 @@ inline void BlendingSplineSurface<T>::generateKnotVectorU(T parDelta, int n)
     nKnots++;
   }
 
-  intervalIncr = parDelta / T(n - 1);
+  intervalIncr = parDelta / T(n - (_closedU ? 0 : 1));
 
-  for (int i = 0; i < nKnots; i++) {
+  if (_closedU) {
+    for (int i = 0; i < nKnots; i++) {
+      if (i < 2)
+        _knotU.push_back(_startPU);
+      else if (i < n+1)
+        _knotU.push_back(_knotU[i-1] + intervalIncr);
+      else
+        _knotU.push_back(_endPU);
+    }
+    _knotU[0] = _knotU[1] - intervalIncr;
+    _knotU[_knotU.size() - 1] = _knotU[_knotU.size() - 2] + intervalIncr;
+  }
+  else {
+    for (int i = 0; i < nKnots; i++) {
     if (i < 2)
       _knotU.push_back(_startPU);
     else if (i < n)
       _knotU.push_back(_knotU[i-1] + intervalIncr);
     else
       _knotU.push_back(_endPU);
+    }
   }
 
-  if (_closedU) {
-    _knotU[0] = _knotU[1] - intervalIncr;
-    _knotU[_knotU.size() - 1] = _knotU[_knotU.size() - 2] + intervalIncr;
-  }
 
 }
 
@@ -66,50 +74,66 @@ void BlendingSplineSurface<T>::generateKnotVectorV(T parDelta, int n)
     nKnots++;
   }
 
-  intervalIncr = parDelta / T(n - 1);
+  intervalIncr = parDelta / T(n - (_closedV ? 0 : 1));
 
-  for (int i = 0; i < nKnots; i++) {
+
+  if (_closedV) {
+    for (int i = 0; i < nKnots; i++) {
+      if (i < 2)
+        _knotV.push_back(_startPV);
+      else if (i < n+1)
+        _knotV.push_back(_knotV[i-1] + intervalIncr);
+      else
+        _knotV.push_back(_endPV);
+    }
+    _knotV[0] = _knotV[1] - intervalIncr;
+    _knotV[_knotV.size() - 1] = _knotV[_knotV.size() - 2] + intervalIncr;
+  }
+  else {
+    for (int i = 0; i < nKnots; i++) {
     if (i < 2)
       _knotV.push_back(_startPV);
     else if (i < n)
       _knotV.push_back(_knotV[i-1] + intervalIncr);
     else
       _knotV.push_back(_endPV);
+    }
   }
 
-  if (_closedV) {
-    _knotV[0] = _knotV[1] - intervalIncr;
-    _knotV[_knotV.size() - 1] = _knotV[_knotV.size() - 2] + intervalIncr;
-  }
 
 }
 
 template <typename T>
 void BlendingSplineSurface<T>::generateSubSurfaces(PSurf<T,3>* surf, int nu, int nv)
 {
-  _subSurfaces.resize(nu);
+  if (_closedU && _closedV)
+    _subSurfaces.setDim(nu+1, nv+1);
+  else if (_closedU)
+    _subSurfaces.setDim(nu+1, nv);
+  else if (_closedV)
+    _subSurfaces.setDim(nu, nv+1);
+  else
+    _subSurfaces.setDim(nu, nv);
 
   for (int i = 0; i < nu; i++) {
-    if (_closedV)
-      _subSurfaces[i].resize(nv + 1);
-    else
-      _subSurfaces[i].resize(nv);
-
     for (int j = 0; j < nv; j++) {
       _subSurfaces[i][j] = new SubPatch<T>(surf,
             _knotU[i+1],
             _knotV[j+1]);
+      this->insert(_subSurfaces[i][j]);
+      _subSurfaces[i][j]->setCollapsed(true);
     }
     if (_closedV)
       _subSurfaces[i][nv] = _subSurfaces[i][0];
   }
-  for (int i = 0; i < _subSurfaces.size(); i++)
-    for (int j = 0; j < _subSurfaces[i].size(); j++) {
-      //_subSurfaces[i][j]->toggleDefaultVisualizer();
-      //_subSurfaces[i][j]->sample(10, 10, 1, 1);
-      this->insert(_subSurfaces[i][j]);
-      _subSurfaces[i][j]->setCollapsed(true);
+
+  if (_closedU) {
+    for (int j = 0; j < _subSurfaces.getDim2(); j++) {
+      _subSurfaces[_subSurfaces.getDim1() - 1][j] = _subSurfaces[0][j];
+    }
   }
+
+
 
 }
 
@@ -138,10 +162,10 @@ void BlendingSplineSurface<T>::eval(T u, T v, int d1, int d2, bool lu, bool lv) 
   int iu = getKnotIndex(_knotU, u);
   int iv = getKnotIndex(_knotV, v);
 
-  HqMatrix<float,3> A_00 = _subSurfaces[iu-1][iv-1]->getMatr();
-  HqMatrix<float,3> A_10 = _subSurfaces[iu][iv-1]->getMatr();
-  HqMatrix<float,3> A_01 = _subSurfaces[iu-1][iv]->getMatr();
-  HqMatrix<float,3> A_11 = _subSurfaces[iu][iv]->getMatr();
+  HqMatrix<float,3> A_00 = _subSurfaces(iu-1)(iv-1)->getMatr();
+  HqMatrix<float,3> A_10 = _subSurfaces(iu)(iv-1)->getMatr();
+  HqMatrix<float,3> A_01 = _subSurfaces(iu-1)(iv)->getMatr();
+  HqMatrix<float,3> A_11 = _subSurfaces(iu)(iv)->getMatr();
 
   //std::cout << A_11 << std::endl;
 
@@ -156,7 +180,7 @@ void BlendingSplineSurface<T>::eval(T u, T v, int d1, int d2, bool lu, bool lv) 
 //  HqMatrix<float,3> test = A_1 * b_u[0];
   HqMatrix<float,3> A = A_00 + A_1 * b_u[0] + A_2 * b_v[0] + A_3 * (b_u[0] * b_v[0]);
   HqMatrix<float,3> Au = A_1 * b_u[1] + A_3 * (b_u[1] * b_v[0]);
-  HqMatrix<float,3>Av = A_2 * b_v[1] + A_3 * (b_u[0] * b_v[1]);
+  HqMatrix<float,3> Av = A_2 * b_v[1] + A_3 * (b_u[0] * b_v[1]);
 
 
 
@@ -237,10 +261,10 @@ T BlendingSplineSurface<T>::getEndPV() const {
   return _knotV[_knotV.size() - 2];
 }
 
-template <typename T>
-std::vector<std::vector<SubPatch<T>*>> BlendingSplineSurface<T>::getSubSurfaces() const
-{
-  return _subSurfaces;
-}
+//template <typename T>
+//std::vector<std::vector<SubPatch<T>*>> BlendingSplineSurface<T>::getSubSurfaces() const
+//{
+//  return _subSurfaces;
+//}
 
 #endif

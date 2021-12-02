@@ -15,7 +15,7 @@ GM_SCENEOBJECT(BlendingSplineSurface)
 public:
   BlendingSplineSurface(PSurf<T,3>* surf, int nu, int nv);
 
-  std::vector<std::vector<SubPatch<T>*>> getSubSurfaces() const;
+//  std::vector<std::vector<SubPatch<T>*>> getSubSurfaces() const;
 
 // from PSurf
   bool          isClosedU() const override;
@@ -44,7 +44,8 @@ private:
   bool _closedV;
 
   PSurf<T,3>*     _surf;
-  std::vector<std::vector<SubPatch<T>*>> _subSurfaces;
+  //std::vector<std::vector<SubPatch<T>*>> _subSurfaces;
+  DMatrix<SubPatch<T>*>      _subSurfaces;
   std::vector<T>  _knotU;
   std::vector<T>  _knotV;
 
