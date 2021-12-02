@@ -19,8 +19,10 @@ inline BlendingSplineSurface<T>::BlendingSplineSurface(PSurf<T,3>* surf, int nu,
 
   _knotU.clear();
   _knotV.clear();
-  generateKnotVectorU(_endPU - _startPU, nu);
-  generateKnotVectorV(_endPV - _startPV, nv);
+//  generateKnotVectorU(_endPU - _startPU, nu);
+//  generateKnotVectorV(_endPV - _startPV, nv);
+  generateKnotVector(_knotU, _startPU, _endPU, _closedU, nu);
+  generateKnotVector(_knotV, _startPV, _endPV, _closedV, nv);
   generateSubSurfaces(surf, nu, nv);
 }
 
@@ -99,8 +101,38 @@ void BlendingSplineSurface<T>::generateKnotVectorV(T parDelta, int n)
       _knotV.push_back(_endPV);
     }
   }
+}
 
+template <typename T>
+void BlendingSplineSurface<T>::generateKnotVector(std::vector<T>& knot, T start, T end, bool closed, int n)
+{
+  int intervals;
+  T intervalIncr;
+  int nKnots;
 
+  if (closed) {
+    nKnots = n + 3;
+    intervals = n;
+  }
+  else {
+    nKnots = n + 2;
+    intervals = n - 1;
+  }
+  T parDelta = end - start;
+  intervalIncr = parDelta / T(intervals);
+
+  for (int i = 0; i < nKnots; i++) {
+    if (i < 2)
+      knot.push_back(start);
+    else if (i < nKnots - 2)
+      knot.push_back(knot[i-1] + intervalIncr);
+    else
+      knot.push_back(end);
+  }
+  if (closed) {
+    knot[0] = knot[1] - intervalIncr;
+    knot[knot.size() - 1] = knot[knot.size() - 2] + intervalIncr;
+  }
 }
 
 template <typename T>
@@ -174,8 +206,8 @@ void BlendingSplineSurface<T>::eval(T u, T v, int d1, int d2, bool lu, bool lv) 
   HqMatrix<float,3> A_3 = A_11 - A_01 - A_1;
 
 
-  Vector<double,2> b_u = calcBlending(calcW(_knotU, u, iu, 1));
-  Vector<double,2> b_v = calcBlending(calcW(_knotV, v, iv, 1));
+  Vector<T,2> b_u = calcBlending(calcW(_knotU, u, iu, 1));
+  Vector<T,2> b_v = calcBlending(calcW(_knotV, v, iv, 1));
 
 //  HqMatrix<float,3> test = A_1 * b_u[0];
   HqMatrix<float,3> A = A_00 + A_1 * b_u[0] + A_2 * b_v[0] + A_3 * (b_u[0] * b_v[0]);
@@ -225,9 +257,9 @@ inline T BlendingSplineSurface<T>::calcW(const std::vector<T>& knot,T t, int i, 
 }
 
 template <typename T>
-inline Vector<double,2> BlendingSplineSurface<T>::calcBlending(double w) const
+inline Vector<T,2> BlendingSplineSurface<T>::calcBlending(T w) const
 {
-  return Vector<double,2>((3 * w * w) - (2 * w * w * w), (6 * w) - (6 * w * w));
+  return Vector<T,2>((3 * w * w) - (2 * w * w * w), (6 * w) - (6 * w * w));
 }
 
 

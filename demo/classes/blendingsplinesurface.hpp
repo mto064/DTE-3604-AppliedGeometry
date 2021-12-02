@@ -33,12 +33,13 @@ protected:
 private:
   void  generateKnotVectorU(T parDelta, int n);
   void  generateKnotVectorV(T parDelta, int n);
+  void  generateKnotVector(std::vector<T>& knot, T start, T end, bool closed, int n);
   void  generateSubSurfaces(PSurf<T,3>* surf, int nu, int nv);
   int   getKnotIndex(const std::vector<T>& knotVector, const T t) const;
 
 
   T     calcW(const std::vector<T>& knot, T t, int i, int d) const;
-  Vector<double,2>     calcBlending(double w) const;
+  Vector<T,2>     calcBlending(T w) const;
 
   bool _closedU;
   bool _closedV;
