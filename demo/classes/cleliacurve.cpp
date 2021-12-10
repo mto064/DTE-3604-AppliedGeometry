@@ -23,8 +23,8 @@ inline void CleliaCurve<T>::eval(T t, int d, bool /*l*/) const
   this->_p.setDim( d + 1 );
 
   const T x = _r * cos(t) * cos(_c * t);
-  const T y = _r * cos(t) * sin(_c * t);
-  const T z = _r * sin(t);
+  const T y = _r * sin(t) * cos(_c * t);
+  const T z = 0;
   this->_p[0][0] = x;
   this->_p[0][1] = y;
   this->_p[0][2] = z;
@@ -38,7 +38,7 @@ inline T CleliaCurve<T>::getStartP() const {
 
 template <typename T>
 inline T CleliaCurve<T>::getEndP()const {
-  return T( 2 * M_PI );
+  return T( 5 * M_PI );
 }
 
 

@@ -109,6 +109,7 @@ qt5_wrap_cpp( HDRS_MOC
   classes/butterfly.hpp
   classes/psimplesubsurf.hpp
   classes/blendingsplinesurface.hpp
+  classes/rosecurve.hpp
 
   classes/subpatch.h
 
