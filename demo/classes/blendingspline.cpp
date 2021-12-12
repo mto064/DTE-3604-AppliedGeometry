@@ -27,20 +27,24 @@ template <typename T>
 inline void BlendingSpline<T>::generateKnotVector(T parDelta, int n)
 {
 
-  int intervals = n;
+  int intervals;
   T intervalIncr;
-  int nKnots = n + _order;
+  int nKnots;
+
   if (_closed) {
-    intervalIncr = parDelta / T(n);
-    nKnots++;
+    nKnots = n + _order + 1;
+    intervals = n;
   }
-  else
-    intervalIncr = parDelta / T(n);
+  else {
+    nKnots = n + _order;
+    intervals = n - 1;
+  }
+  intervalIncr = parDelta / T(intervals);
 
   for (int i = 0; i < nKnots; i++) {
     if (i < _order)
       _t.push_back(_startP);
-    else if (i < n + 1)
+    else if (i < nKnots - _order)
       _t.push_back(_t[i-1] + intervalIncr);
     else
       _t.push_back(_endP);
@@ -63,6 +67,10 @@ inline void BlendingSpline<T>::generateControlCurves(PCurve<T,3>* curve, int n)
   //auto c = new PCurve<T,3>(curve);
   for (int i = 0; i < n; i++) {
     _c[i] = new GMlib::PSubCurve<T>(curve, _t[i], _t[i+2], _t[i+1]);
+    this->insert(_c[i]);
+    //_c[i]->toggleDefaultVisualizer();
+    _c[i]->sample(100,1);
+    _c[i]->setCollapsed(true);
   }
   if (_closed)
     _c[n] = _c[0];
@@ -89,7 +97,7 @@ inline void BlendingSpline<T>::eval(T t, int d, bool /*l*/) const
 {
   this->_p.setDim( d + 1 );
 
-  int i = getKnotIndex(t, _c.size());
+  int i = getKnotIndex(t, _t.size() - 1);
 
   auto c_i =_c[i]->evaluateParent(t, d)[0];
   auto c_i1 = _c[i-1]->evaluateParent(t, d)[0];
@@ -105,11 +113,34 @@ inline void BlendingSpline<T>::eval(T t, int d, bool /*l*/) const
 template <typename T>
 inline void BlendingSpline<T>::localSimulate(double dt)
 {
-//  for (int i = 0; i < _c.size() - 1; i++) {
-//    _c[i]->rotate(dt * 0.7, Vector<double,3>(0, 0, 1));
-//  }
+  static double t = 0;
+  t += dt;
+  std::cout << t << std::endl;
 
-  //_c[5]->rotate(dt * 0.8, Vector<double,3>(0, 0, 1));
+  if (t < 6) {
+    T circlePart = 13;
+    for (int i = 2; i < _c.size() - 1; i+= 4) {
+
+      auto dir = Vector<T,3>(cos(circlePart * M_PI / 7), sin(circlePart * M_PI / 7), 0);
+      float speed = 0.01;
+      _c[i]->translate( speed * dir);
+      circlePart -= 2;
+    }
+  }
+  else if (t < 12) {
+    T circlePart = 13;
+    for (int i = 2; i < _c.size() - 1; i+= 4) {
+
+      auto dir = Vector<T,3>(cos(circlePart * M_PI / 7), sin(circlePart * M_PI / 7), 0);
+      float speed = 0.01;
+      _c[i]->translate( speed * -dir);
+      circlePart -= 2;
+    }
+  }
+  if (t > 12)
+    t = 0;
+
+
   this->resample();
   this->setEditDone();
 }

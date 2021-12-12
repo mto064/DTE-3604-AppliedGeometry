@@ -29,6 +29,7 @@
 #include "classes/cleliacurve.hpp"
 #include "classes/butterfly.hpp"
 #include "classes/blendingsplinesurface.hpp"
+#include "classes/rosecurve.hpp"
 
 #include "classes/psimplesubsurf.hpp"
 
@@ -62,7 +63,7 @@ void Scenario::initializeScenario() {
   this->scene()->insertSun();
 
   // insert pointlight
-  this->scene()->insert(light);
+  //this->scene()->insert(light);
 
   // Default camera parameters
   int init_viewport_size = 600;
@@ -145,27 +146,34 @@ void Scenario::initializeScenario() {
   bool showClelia = false;
   if (showClelia)
   {
-    auto clelia = new CleliaCurve<double>(3.0, 10);
-//    clelia->sample(300, 1);
+  float r = 3.0;
+    auto clelia = new CleliaCurve<double>(r, (7.0/5.0));
+    clelia->sample(300, 1);
 //    clelia->toggleDefaultVisualizer();
-//    clelia->setColor(GMlib::GMcolor::aliceBlue());
+//    clelia->setColor(GMlib::GMcolor::darkBlue());
 //    this->scene()->insert(clelia);
 
-    auto blendspline = new BlendingSpline<double>(clelia, 19);
-    blendspline->sample(500, 1);
+    auto blendspline = new BlendingSpline<double>(clelia, 28);
+    blendspline->sample(200, 1);
     blendspline->toggleDefaultVisualizer();
     blendspline->setColor(GMlib::GMcolor::blueViolet());
     //blendspline->translate(Vector3(0, 0, 4));
     this->scene()->insert(blendspline);
     // show control curves
     auto cc = blendspline->getControlCurves();
-    std::cout << cc.size() << std::endl;
-//    for (auto& curve : cc) {
-//      curve->sample(50, 1);
-//      curve->toggleDefaultVisualizer();
-//      this->scene()->insert(curve);
-//    }
 
+    for (int i = 0; i < cc.size(); i++) {
+      if (i % 4 == 2) {
+        cc[i]->setCollapsed(true);
+      }
+    }
+//    cc[2]->translate(Vector3(r * cos(13 * M_PI / 7), r * sin(13 * M_PI / 7), 0));
+//    cc[6]->translate(Vector3(r * cos(11 * M_PI / 7), r * sin(11 * M_PI / 7), 0));
+//    cc[10]->translate(Vector3(r * cos(9 * M_PI / 7), r * sin(9 * M_PI / 7), 0));
+//    cc[14]->translate(Vector3(r * cos(7 * M_PI / 7), r * sin(7 * M_PI / 7), 0));
+//    cc[18]->translate(Vector3(r * cos(5 * M_PI / 7), r * sin(5 * M_PI / 7), 0));
+//    cc[22]->translate(Vector3(r * cos(3 * M_PI / 7), r * sin(3 * M_PI / 7), 0));
+//    cc[26]->translate(Vector3(r * cos(1 * M_PI / 7), r * sin(1 * M_PI / 7), 0));
   }
 
   bool showButterfly = false;
@@ -195,47 +203,195 @@ void Scenario::initializeScenario() {
     }
   }
 
+  bool showRoseCurve = false;
+  if (showRoseCurve)
+  {
+    auto rose = new RoseCurve<double>(3.0, 7.0, 4.0);
+//    rose->sample(300, 1);
+//    rose->toggleDefaultVisualizer();
+//    rose->setColor(GMlib::GMcolor::darkBlue());
+//    this->scene()->insert(rose);
 
-//  Vector3 points[] {
-//    Vector3(0.0, 0.0, 0.0),
-//    Vector3(-2.0, 5.0, 0.0),
-//    Vector3(3.0, 8.0, 0.0),
-//    Vector3(8.0, 5.0, 0.0),
-//    Vector3(10.0, 2.0, 0.0),
-//    Vector3(7.0, 0.0, 0.0),
-//    Vector3(6.0, 4.0, 0.0),
-//    Vector3(2.0, 4.0, 0.0),
-//    Vector3(2.0, 1.0, 0.0),
-//    Vector3(3.0, 0.0, 0.0)
-//  };
+    auto blendspline = new BlendingSpline<double>(rose, 56);
+    blendspline->sample(400, 1);
+    blendspline->toggleDefaultVisualizer();
+    blendspline->setColor(GMlib::GMcolor::red());
+    //blendspline->translate(Vector3(0, 0, 4));
+    this->scene()->insert(blendspline);
 
+    auto cc = blendspline->getControlCurves();
+
+//    for (auto& curve : cc) {
+//      curve->sample(100, 1);
+//      curve->toggleDefaultVisualizer();
+//      //curve->setColor(Color(dis(gen), dis(gen), dis(gen)));
+//      this->scene()->insert(curve);
+//    }
+//     for (int i = 0; i < cc.size(); i++) {
+//      if ( i % 4 == 0) {
+//        cc[i]->setColor(GMlib::GMcolor::blue());
+//        //cc[i]->rotate(-M_PI_2, Vector3(0, 1, 0));
+//      }
+//    }
+//    cc[0]->rotate(M_PI, Vector3(1, 0, 0));
+//    auto dir = cc[4]->getGlobalPos() - Vector3(0, 0, 0);
+//    cc[4]->rotateParent(M_PI, dir.normalize());
+//    std::cout << cc[0]->getGlobalPos() << std::endl;
+//    std::cout << cc[4]->getGlobalPos() << std::endl;
+//    cc[55]->setColor(GMlib::GMcolor::black());
+
+
+    cc[0]->setColor(GMlib::GMcolor::black());
+    cc[1]->setColor(GMlib::GMcolor::black());
+    cc[2]->setColor(GMlib::GMcolor::black());
+    cc[3]->setColor(GMlib::GMcolor::black());
+  }
+
+  bool showRoseCurve2 = true;
+  if (showRoseCurve2)
+  {
+    auto rose = new RoseCurve<double>(3.0, 7, 5);
+
+    auto blendspline = new BlendingSpline<double>(rose, 28);
+    blendspline->sample(400, 1);
+    blendspline->toggleDefaultVisualizer();
+    blendspline->setColor(GMlib::GMcolor::red());
+    this->scene()->insert(blendspline);
+
+    auto cc = blendspline->getControlCurves();
+
+    // part 1 : move middle curves
+//    double circlePart = 13;
+//    for (int i = 2; i < cc.size() - 1; i+= 4) {
+
+//      auto dir = Vector3(cos(circlePart * M_PI / 7), sin(circlePart * M_PI / 7), 0);
+//      float speed = 1.0;
+//      cc[i]->translate( speed * -dir);
+//      cc[i]->setCollapsed(true);
+//      circlePart -= 2;
+//    }
+
+    // part 2
+//    auto dir = Vector3(cos(1 * M_PI / 7), sin(1 * M_PI / 7), 0);
+//    cc[1]->translateGlobal(dir * 1.5);
+//    cc[23]->translateGlobal(dir * 1.5);
+
+//    for (int i = 0; i < cc.size() - 1; i+=4) {
+//      auto dir = cc[i]->getGlobalPos() - Vector3(0, 0, 0);
+//      cc[i]->rotateParent(M_PI_2, dir.normalize());
+//      cc[i]->setCollapsed(true);
+//    }
+
+
+
+//    cc[0]->rotate(M_PI, Vector3(1, 0, 0));
+//    auto dir = cc[4]->getGlobalPos() - Vector3(0, 0, 0);
+//    cc[4]->rotateParent(M_PI, dir.normalize());
+//    std::cout << cc[0]->getGlobalPos() << std::endl;
+//    std::cout << cc[4]->getGlobalPos() << std::endl;
+//    cc[55]->setColor(GMlib::GMcolor::black());
+
+//    float x = std::cos((2.0 * M_PI * 3.0)/28.0);
+//    float y = std::sin((2.0 * M_PI * 3.0)/28.0);
+//    auto newPos = Vector3(x, y, 0);
+//    auto trans = Vector3(0, 0, 0) - cc[0]->getGlobalPos();
+//    cc[0]->translate(trans);
+//    cc[0]->rotate(45, Vector3(0, 0, 1));
+//    cc[0]->translate(-trans);
+
+    //cc[0]->setCollapsed(true);
+
+//    cc[1]->setCollapsed(true);
+//    cc[23]->setCollapsed(true);
+
+    //cc[26]->setCollapsed(true);
+
+    //cc[5]->setCollapsed(true);
+    //cc[27]->setCollapsed(true);
+
+    //cc[9]->setCollapsed(true);
+
+
+
+
+  }
+
+
+  bool showTestCircle = false;
+  if (showTestCircle)
+  {
+    auto circle = new GMlib::PLine<float>(GMlib::Point<float,3>(0,0,0), GMlib::Point<float,3>(0,20,0));
+    circle->sample(100, 1);
+    circle->toggleDefaultVisualizer();
+    //this->scene()->insert(circle);
+
+    auto blendspline = new BlendingSpline<float>(circle, 4);
+    blendspline->sample(100, 1);
+    blendspline->toggleDefaultVisualizer();
+    blendspline->setColor(GMlib::GMcolor::blueViolet());
+    //blendspline->translate(Vector3(0, 0, 4));
+    this->scene()->insert(blendspline);
+
+//    auto cc = blendspline->getControlCurves();
+
+//    for (auto& curve : cc) {
+//      curve->sample(100, 1);
+//      curve->toggleDefaultVisualizer();
+//      curve->setColor(Color(dis(gen), dis(gen), dis(gen)));
+//      this->scene()->insert(curve);
+//    }
+//    cc[0]->rotate(M_PI, Vector3(0, 1, 0));
+
+  }
 
   // ***  B-splines with different b-functions  *** //
   bool showBSplines = false;
   if (showBSplines)
   {
+//    Vector3 points[] {
+//      Vector3(4.0, 0.0, 0.0),
+//      Vector3(4.0, 5.0, 0.0),
+//      Vector3(8.0, 8.0, 0.0),
+//      Vector3(16.0, 8.0, 0.0),
+//      Vector3(20.0, 5.0, 0.0),
+//      Vector3(20.0, 0.0, 0.0)
+//    };
+
     Vector3 points[] {
       Vector3(4.0, 0.0, 0.0),
-      Vector3(4.0, 5.0, 0.0),
-      Vector3(8.0, 8.0, 0.0),
-      Vector3(16.0, 8.0, 0.0),
-      Vector3(20.0, 5.0, 0.0),
-      Vector3(20.0, 0.0, 0.0)
+      Vector3(1.0, 5.0, 0.0),
+      Vector3(5.0, 10.0, 0.0),
+      Vector3(9.0, 7.0, 0.0),
+      Vector3(14.0, 11.0, 0.0),
+      Vector3(16.0, 5.0, 0.0),
+      Vector3(15.0, -1.0, 0.0),
+      Vector3(8.0, 1.0, 0.0),
+      Vector3(6.0, 4.0, 0.0),
+      Vector3(11.0, 5.0, 0.0),
     };
 
     int size = sizeof(points) / sizeof(points[0]);
     // visualize the control points
-    for (int i = 0; i <= size; i++) {
-      auto sphere = new GMlib::PSphere<double>(0.2);
-      sphere->translate(points[i]);
-      sphere->sample(100, 100, 1, 1);
-      sphere->toggleDefaultVisualizer();
-      this->scene()->insert(sphere);
-    }
+    //std::vector<GMlib::PSphere<double>>
+//    for (int i = 0; i <= size; i++) {
+//      auto sphere = new GMlib::PSphere<double>(0.2);
+//      sphere->translate(points[i]);
+//      sphere->sample(100, 100, 1, 1);
+//      sphere->toggleDefaultVisualizer();
+//      this->scene()->insert(sphere);
+//    }
+//    // draw the lines between points
+//    for (int i = 0; i < size; i++) {
+//      auto line = new PLine<double>(points[i].toPoint(), points[i+1].toPoint());
+//      line->sample(20, 1);
+//      line->toggleDefaultVisualizer();
+//      this->scene()->insert(line);
+//    }
+
     // create b-spline with no blending
     auto controlPoints = GMlib::DVector<Vector3>(size, points);
     auto bspline = new BSpline<double>(controlPoints, 3.0, 15.0, false);
-    bspline->sample(20, 1);
+    bspline->sample(100, 1);
     bspline->toggleDefaultVisualizer();
     bspline->setColor(GMlib::GMcolor::aqua());
     this->scene()->insert(bspline);
@@ -243,7 +399,7 @@ void Scenario::initializeScenario() {
     // create a second bspline with blending = true
     auto bspline2 = new BSpline<double>(controlPoints, 0.0, 15.0, false);
     bspline2->setBlending(true);
-    bspline2->sample(40, 1);
+    bspline2->sample(100, 1);
     bspline2->toggleDefaultVisualizer();
     bspline2->setColor(GMlib::GMcolor::green());
     this->scene()->insert(bspline2);
@@ -291,6 +447,13 @@ void Scenario::initializeScenario() {
       s->setMaterial(GMlib::GMmaterial::emerald());
       this->scene()->insert(s);
     }
+    // draw lines between control points
+    for (int i = 0; i < cp.getDim() - 1; i++) {
+      auto line = new PLine<double>(cp[i].toPoint(), cp[i+1].toPoint());
+      line->sample(20, 1);
+      line->toggleDefaultVisualizer();
+      this->scene()->insert(line);
+    }
   }
 
 
@@ -304,48 +467,44 @@ void Scenario::initializeScenario() {
       Vector3(8.0, 0.0, 0.0)
     };
     int div_size = sizeof(div_p) / sizeof(div_p[0]);
+    // draw lines between points
+//    for (int i = 0; i < div_size - 1; i++) {
+//      auto line = new PLine<double>(div_p[i].toPoint(), div_p[i+1].toPoint());
+//      line->sample(20, 1);
+//      line->toggleDefaultVisualizer();
+//      this->scene()->insert(line);
+//    }
+//    auto line = new PLine<double>(div_p[0].toPoint(), div_p[3].toPoint());
+//    line->sample(20, 1);
+//    line->toggleDefaultVisualizer();
+//    this->scene()->insert(line);
     auto div_points = GMlib::DVector<Vector3>(div_size, div_p);
     auto subdiv = new SubDivisionCurve<double>(div_points);
-    subdiv->sample(2, 1);
+    subdiv->sample(3, 1);
     subdiv->toggleDefaultVisualizer();
     this->scene()->insert(subdiv);
   }
 
-
+  // ***   Blending spline surface   *** //
   bool showBlendSurface = false;
   if (showBlendSurface) {
-    auto plane = new GMlib::PPlane<float>(GMlib::Point<float,3>(0, 0, 0), Vector3(8, 0, 0), Vector3(0, 15, 0));
-    plane->sample(10, 10, 1, 1);
-    plane->toggleDefaultVisualizer();
-    plane->setMaterial(GMlib::GMmaterial::emerald());
-    this->scene()->insert(plane);
+    auto plane = new GMlib::PPlane<float>(GMlib::Point<float,3>(0, 0, 0), Vector3(6, 0, 0), Vector3(0, 6, 0));
+//    plane->sample(10, 10, 1, 1);
+//    plane->toggleDefaultVisualizer();
+//    plane->setMaterial(GMlib::GMmaterial::emerald());
+//    this->scene()->insert(plane);
 
-    auto blendSurf = new BlendingSplineSurface<float>(plane, 3, 4);
-    blendSurf->sample(10, 10, 1, 1);
-    blendSurf->toggleDefaultVisualizer();
-    //auto subSurfs = blendSurf->getSubSurfaces();
-    //subSurfs[1][1]->translate(Vector3(0, 0, 2));
-//    for (int i = 0; i < subSurfs[0].size(); i++) {
-//      subSurfs[0][i]->rotate(-45, Vector3(0, 1, 0));
+    auto blendSurf = new BlendingSplineSurface<float>(plane, 3, 3);
+    auto subs = blendSurf->getSubSurfaces();
+//    for (int i = 0; i < 6; i++) {
+//      subs(2)(i)->rotateGlobal(45, GMlib::Vector<float,3>(0, 1, 0));
 //    }
-    //subSurfs[0][0]->rotate(20, Vector3(0, 1, 0));
-//    blendSurf->sample(10, 10, 1, 1);
-//    this->scene()->insert(blendSurf);
-//    auto subs = blendSurf->getSubSurfaces();
+//    subs(1)(1)->rotateGlobal(160, Vector3(0, 0, 1));
+//    subs(1)(1)->translate(Vector3(0, 0, 4));
 
-
-
-    for (int i = 0; i < 5; i++) {
-      double u = plane->getParStartU() + i * plane->getParDeltaU() / 4;
-
-       for (int j = 0; j < 5; j++) {
-          double v = plane->getParStartV() + j * plane->getParDeltaV() / 4;
-//          std::cout << plane->getPosition(u, v) << std::endl;
-//          std::cout << blendSurf->getPosition(u, v) << std::endl;
-
-       }
-    }
-
+    blendSurf->sample(20, 20, 1, 1);
+    blendSurf->toggleDefaultVisualizer();
+    this->scene()->insert(blendSurf);
   }
 
   bool showBlendSurf2 = false;
@@ -363,18 +522,28 @@ void Scenario::initializeScenario() {
     this->scene()->insert(blendSurf);
   }
 
-  bool showBlendTorus = true;
+  bool showBlendTorus = false;
   if (showBlendTorus) {
     auto torus = new GMlib::PTorus<float>(3, 1, 1);
-    torus->sample(100, 100, 1,1 );
-    torus->toggleDefaultVisualizer();
-    scene()->insert(torus);
+//    torus->sample(100, 100, 1,1 );
+//    torus->toggleDefaultVisualizer();
+//    scene()->insert(torus);
 
     auto blendSurf = new BlendingSplineSurface<float>(torus, 5, 8);
-    blendSurf->sample(100, 100, 1, 1);
+
     blendSurf->toggleDefaultVisualizer();
     blendSurf->setMaterial(GMlib::GMmaterial::ruby());
     this->scene()->insert(blendSurf);
+    auto subs = blendSurf->getSubSurfaces();
+//    for (int i = 0; i < 8; i++) {
+//      subs(0)(i)->translate(Vector3(3, 0, 0));
+//      subs(0)(i)->rotateGlobal(140, Vector3(0, 1, 0));
+//      subs(0)(i)->translate(Vector3(3, 0, 0));
+//    }
+
+    //subs(0)(1)->rotate(60, Vector3(0, 1, 1));
+    blendSurf->sample(100, 100, 1, 1);
+
   }
 
 }

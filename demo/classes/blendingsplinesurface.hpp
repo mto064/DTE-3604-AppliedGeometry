@@ -15,7 +15,7 @@ GM_SCENEOBJECT(BlendingSplineSurface)
 public:
   BlendingSplineSurface(PSurf<T,3>* surf, int nu, int nv);
 
-//  std::vector<std::vector<SubPatch<T>*>> getSubSurfaces() const;
+  DMatrix<SubPatch<T>*> getSubSurfaces() const;
 
 // from PSurf
   bool          isClosedU() const override;
@@ -29,6 +29,7 @@ protected:
   T             getStartPV() const override;
   T             getEndPV()   const override;
   void          localSimulate(double dt) override;
+  void          edit(SceneObject* lp) override;
 
 private:
   void  generateKnotVectorU(T parDelta, int n);
@@ -55,7 +56,7 @@ private:
   T               _startPV;
   T               _endPV;
 
-  bool runSimulate = true;
+  bool runSimulate = false;
 
 };
 

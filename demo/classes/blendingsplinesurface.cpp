@@ -150,8 +150,7 @@ void BlendingSplineSurface<T>::generateSubSurfaces(PSurf<T,3>* surf, int nu, int
   for (int i = 0; i < nu; i++) {
     for (int j = 0; j < nv; j++) {
       _subSurfaces[i][j] = new SubPatch<T>(surf,
-            _knotU[i+1],
-            _knotV[j+1]);
+            _knotU[i+1], _knotV[j+1]);
       this->insert(_subSurfaces[i][j]);
       _subSurfaces[i][j]->setCollapsed(true);
     }
@@ -246,6 +245,12 @@ void BlendingSplineSurface<T>::localSimulate(double dt)
 
 }
 
+template <typename T>
+void BlendingSplineSurface<T>::edit(SceneObject* lp)
+{
+  this->sample(10, 10, 1,1);
+  this->setEditDone();
+}
 
 
 template <typename T>
@@ -293,10 +298,10 @@ T BlendingSplineSurface<T>::getEndPV() const {
   return _knotV[_knotV.size() - 2];
 }
 
-//template <typename T>
-//std::vector<std::vector<SubPatch<T>*>> BlendingSplineSurface<T>::getSubSurfaces() const
-//{
-//  return _subSurfaces;
-//}
+template <typename T>
+DMatrix<SubPatch<T>*> BlendingSplineSurface<T>::getSubSurfaces() const
+{
+  return _subSurfaces;
+}
 
 #endif
