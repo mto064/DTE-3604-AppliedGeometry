@@ -267,7 +267,7 @@ void Scenario::initializeScenario() {
       auto dir = Vector3(cos(circlePart * M_PI / 7), sin(circlePart * M_PI / 7), 0);
       float speed = 1.0;
       cc[i]->translate( speed * -dir);
-      cc[i]->setCollapsed(true);
+      //cc[i]->setCollapsed(true);
       circlePart -= 2;
     }
 
