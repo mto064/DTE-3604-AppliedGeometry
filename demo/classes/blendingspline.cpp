@@ -20,6 +20,12 @@ BlendingSpline<T>::BlendingSpline(PCurve<T,3>* curve, int n)
   generateKnotVector(curve->getParDelta(), n);
   generateControlCurves(curve, n);
 
+
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  _gen = gen;
+  std::uniform_real_distribution<> dis(0, 1.0);
+  _dis = dis;
 }
 
 
@@ -64,13 +70,13 @@ inline void BlendingSpline<T>::generateControlCurves(PCurve<T,3>* curve, int n)
     _c.resize(n + 1);
   else
     _c.resize(n);
-  //auto c = new PCurve<T,3>(curve);
+
   for (int i = 0; i < n; i++) {
     _c[i] = new GMlib::PSubCurve<T>(curve, _t[i], _t[i+2], _t[i+1]);
     this->insert(_c[i]);
     //_c[i]->toggleDefaultVisualizer();
     _c[i]->sample(100,1);
-    _c[i]->setCollapsed(true);
+    //_c[i]->setCollapsed(true);
   }
   if (_closed)
     _c[n] = _c[0];
@@ -114,31 +120,42 @@ template <typename T>
 inline void BlendingSpline<T>::localSimulate(double dt)
 {
   static double t = 0;
+  static int count = 0;
   t += dt;
-  std::cout << t << std::endl;
 
-  if (t < 6) {
+  if (count == 0)
+    this->setColor(Color(_dis(_gen), _dis(_gen), _dis(_gen)));
+
+  //std::cout << t << std::endl;
+  int changeDir = (1.0 / _animSpeed) * 4;
+  if (count < changeDir) {
     T circlePart = 13;
     for (int i = 2; i < _c.size() - 1; i+= 4) {
 
       auto dir = Vector<T,3>(cos(circlePart * M_PI / 7), sin(circlePart * M_PI / 7), 0);
-      float speed = 0.01;
-      _c[i]->translate( speed * dir);
+      //float speed = 0.01;
+      _c[i]->translate( _animSpeed * dir);
       circlePart -= 2;
     }
   }
-  else if (t < 12) {
+  else if (count >= changeDir) {
     T circlePart = 13;
     for (int i = 2; i < _c.size() - 1; i+= 4) {
 
       auto dir = Vector<T,3>(cos(circlePart * M_PI / 7), sin(circlePart * M_PI / 7), 0);
-      float speed = 0.01;
-      _c[i]->translate( speed * -dir);
+      //float speed = 0.01;
+      _c[i]->translate( _animSpeed * -dir);
       circlePart -= 2;
     }
   }
-  if (t > 12)
-    t = 0;
+  count += 1;
+  if (count >= changeDir * 2)
+    count = 0;
+
+  for (int i = 0; i < _c.size() - 1; i+= 4) {
+    auto dir = _c[i]->getGlobalPos() - Vector3(0, 0, 0);
+    _c[i]->rotateParent(_rotSpeed, dir.normalize());
+  }
 
 
   this->resample();

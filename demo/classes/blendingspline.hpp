@@ -5,6 +5,7 @@
 #include <parametrics/gmpcurve.h>
 #include <parametrics/curves/gmperbscurve.h>
 #include <vector>
+#include <random>
 
 using namespace GMlib;
 
@@ -45,7 +46,12 @@ private:
   bool                  _closed;
   T                     _startP;
   T                     _endP;
+  float                 _animSpeed = 0.02;
+  float                 _rotSpeed = 0.05;
 
+  //std::random_device rd;
+  std::mt19937 _gen;
+  std::uniform_real_distribution<> _dis;
 
 };
 

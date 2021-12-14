@@ -260,16 +260,16 @@ void Scenario::initializeScenario() {
 
     auto cc = blendspline->getControlCurves();
 
-    // part 1 : move middle curves
-//    double circlePart = 13;
-//    for (int i = 2; i < cc.size() - 1; i+= 4) {
+    // part 1 : move middle curves,
+    double circlePart = 13;
+    for (int i = 2; i < cc.size() - 1; i+= 4) {
 
-//      auto dir = Vector3(cos(circlePart * M_PI / 7), sin(circlePart * M_PI / 7), 0);
-//      float speed = 1.0;
-//      cc[i]->translate( speed * -dir);
-//      cc[i]->setCollapsed(true);
-//      circlePart -= 2;
-//    }
+      auto dir = Vector3(cos(circlePart * M_PI / 7), sin(circlePart * M_PI / 7), 0);
+      float speed = 1.0;
+      cc[i]->translate( speed * -dir);
+      cc[i]->setCollapsed(true);
+      circlePart -= 2;
+    }
 
     // part 2
 //    auto dir = Vector3(cos(1 * M_PI / 7), sin(1 * M_PI / 7), 0);
@@ -298,22 +298,6 @@ void Scenario::initializeScenario() {
 //    cc[0]->translate(trans);
 //    cc[0]->rotate(45, Vector3(0, 0, 1));
 //    cc[0]->translate(-trans);
-
-    //cc[0]->setCollapsed(true);
-
-//    cc[1]->setCollapsed(true);
-//    cc[23]->setCollapsed(true);
-
-    //cc[26]->setCollapsed(true);
-
-    //cc[5]->setCollapsed(true);
-    //cc[27]->setCollapsed(true);
-
-    //cc[9]->setCollapsed(true);
-
-
-
-
   }
 
 
